@@ -7,6 +7,7 @@ const API = import.meta.env.VITE_API_URL;
 
 const initialState = {
       user: null,
+       isAuthenticated: false,
       loading: false,
       error: null,
 };
@@ -86,29 +87,81 @@ export const resendOtp = createAsyncThunk(
 );
 
 
+
+
 export const signup = createAsyncThunk(
-      "auth/signup",
-      async (formData, { rejectWithValue }) => {
-            try {
-                  const res = await fetch(`${API}/api/v1/user/signup`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        credentials: "include",
-                        body: JSON.stringify(formData),
-                  });
+  "auth/signup",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${API}/api/v1/user/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // correct way to send cookies
+        body: JSON.stringify(formData),
+      });
 
-                  if (!res.ok) {
-                        const errorData = await res.json();
-                        return rejectWithValue(errorData.message || "Signup failed");
-                  }
+      const data = await res.json(); 
 
-                  const data = await res.json();
-                  return data.responseData;
-            } catch (err) {
-                  return rejectWithValue(err.message);
-            }
+      if (!res.ok || !data.success) {
+        return rejectWithValue(data.message || "Signup failed");
       }
+     
+      return data.responseData
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
 );
+
+
+export const login = createAsyncThunk(
+  "auth/login",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${API}/api/v1/user/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // correct way to send cookies
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json(); 
+
+      if (!res.ok || !data.success) {
+        return rejectWithValue(data.message || "Login failed");
+      }
+     
+      return data.responseData
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${API}/api/v1/user/logout`, {
+        method: "POST",
+        credentials: "include", 
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        return rejectWithValue(data.message || "Logout failed");
+      }
+
+      return data; 
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
 
 
 
@@ -162,11 +215,34 @@ const authSlice = createSlice({
                   })
                   .addCase(signup.fulfilled, (state, action) => {
                         state.loading = false;
+                        state.isAuthenticated = true;
                         state.user = action.payload;
                   })
                   .addCase(signup.rejected, (state, action) => {
                         state.loading = false;
                         state.error = action.payload;
+                  })
+                  .addCase(login.pending, (state) => {
+                        state.loading = true;
+                        state.error = null;
+                  })
+                  .addCase(login.fulfilled, (state, action) => {
+                        state.loading = false;
+                        state.isAuthenticated = true;
+                        state.user = action.payload;
+                  })
+                  .addCase(login.rejected, (state, action) => {
+                        state.loading = false;
+                        state.error = action.payload;
+                  })
+                  .addCase(logout.fulfilled, (state) => {
+                         state.user = null;
+                          state.isAuthenticated = false; 
+                          state.loading = false; 
+                  }) 
+                  .addCase(logout.rejected, (state, action) => { 
+                        state.loading = false; 
+                        state.error = action.payload; 
                   });
       },
 });

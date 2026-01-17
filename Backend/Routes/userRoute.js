@@ -1,6 +1,6 @@
 
 import express from "express"
-import {sendOtp , verifyOtp , resendOtp , signup , login} from "../Controllers/userController.js"
+import {sendOtp , verifyOtp , resendOtp , signup , login , logout} from "../Controllers/userController.js"
 
 const router = express.Router()
 
@@ -11,6 +11,8 @@ router.post("/resend-otp" , resendOtp)
 router.post("/signup" , signup)
 
 router.post("/login" , login)
+
+router.post("/logout", logout);
 
 
 

@@ -3,6 +3,7 @@ import { User } from "../Models/userModel.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import nodemailer from "nodemailer";
+import { OtpVerification } from "../Models/otpVerificationModule.js";
 
 
 
@@ -18,7 +19,12 @@ export const signup = async (req, res) => {
             })
         }
 
-       const existingUser = await User.findOne({ email });
+        const otpRecord = await OtpVerification.findOne({ email });
+        if (!otpRecord || !otpRecord.isVerified) {
+            return res.status(400).json({ success: false, message: "Email not verified" });
+        }
+
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(400).json({
@@ -27,9 +33,11 @@ export const signup = async (req, res) => {
             })
         }
 
+        console.log("ADMIN_EMAIL:", process.env.ADMIN_EMAIL);
         const hashedPassword = await bcrypt.hash(password, 10)
 
-        const role = email === process.env.ADMIN_EMAIL ? "admin" : "user"
+        const role = email === process.env.ADMIN_EMAIL ? "admin" : "user";
+
 
         const user = await User.create({
             name,
@@ -138,51 +146,47 @@ export const sendEmail = async (to, otp) => {
 export const sendOtp = async (req, res) => {
     try {
         const { email } = req.body;
-
-        let user = await User.findOne({ email });
-
-        if (!user) {
-            user = await User.create({ email });
-        }
-
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-        user.otp = otp;
-        user.otpExpires = Date.now() + 5 * 60 * 1000; // 5 min
-        await user.save();
-
+        await OtpVerification.findOneAndUpdate(
+            { email },
+            {
+                otp, otpExpires: Date.now() + 5 * 60 * 1000,
+                otpResendCount: 0,
+                otpLastSentAt: Date.now(),
+                isVerified: false
+            },
+            { upsert: true, new: true });
         await sendEmail(email, otp);
-
-        res.json({ message: "OTP sent successfully" });
+        res.json({ success: true, message: "OTP sent successfully" });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
+        console.error(error); res.status(500).json({ success: false, message: "Server error" });
     }
-}
+};
 
 
 export const verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
 
-    const user = await User.findOne({ email });
+    const record = await OtpVerification.findOne({ email });
 
-    if (!user) {
-        return res.status(400).json({ message: "User not found" });
+
+
+    if (!record) {
+        return res.status(400).json({ message: "No Otp record found" });
     }
 
     if (
-        user.otp !== otp ||
-        user.otpExpires < Date.now()
+        record.otp !== otp ||
+        record.otpExpires < Date.now()
     ) {
         return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    user.isVerified = true;
-    user.otp = null;
-    user.otpExpires = null;
-    await user.save();
-
+    record.isVerified = true;
+    record.otp = null;
+    record.otpExpires = null;
+    await record.save();
     res.json({ message: "OTP verified successfully" });
 }
 
@@ -192,44 +196,64 @@ export const verifyOtp = async (req, res) => {
 export const resendOtp = async (req, res) => {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    const record = await OtpVerification.findOne({ email });
 
-    if (!user) {
+    if (!record) {
         return res.status(404).json({ message: "User not found" });
     }
 
-    if (user.isVerified) {
+    if (record.isVerified) {
         return res.status(400).json({ message: "User already verified" });
     }
 
-    // Limit resend attempts
-    if (user.otpResendCount >= 5) {
+
+    if (record.otpResendCount >= 5) {
         return res.status(429).json({
             message: "OTP resend limit reached"
         });
     }
 
-    // Wait time (30 seconds)
     if (
-        user.otpLastSentAt &&
-        Date.now() - user.otpLastSentAt < 30 * 1000
+        record.otpLastSentAt &&
+        Date.now() - record.otpLastSentAt < 30 * 1000
     ) {
         return res.status(429).json({
             message: "Please wait before resending OTP"
         });
     }
-
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
 
-    user.otp = otp;
-    user.otpExpires = Date.now() + 5 * 60 * 1000;
-    user.otpResendCount += 1;
-    user.otpLastSentAt = Date.now();
+    record.otp = otp;
+    record.otpExpires = Date.now() + 5 * 60 * 1000;
+    record.otpResendCount += 1;
+    record.otpLastSentAt = Date.now();
 
-    await user.save();
+
+    await record.save();
     await sendEmail(email, otp);
-
     res.json({ message: "OTP resent successfully" });
 }
 
 
+
+export const logout = (req, res) => {
+    try {
+        res
+            .status(200)
+            .cookie("token", "", {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                expires: new Date(0) 
+            })
+            .json({
+                success: true,
+                message: "Logged out successfully!"
+            });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
+    }
+};

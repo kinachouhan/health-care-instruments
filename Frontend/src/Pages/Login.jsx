@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { Logo } from "../Components/Logo";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { login } from "../Redux/auth";
+import { useNavigate } from "react-router-dom"
 
 export const Login = () => {
 
@@ -9,15 +12,31 @@ export const Login = () => {
         password: ""
     })
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const handleInput = (e) => {
         const { name, value } = e.target
-
         setFormData(prev => ({
             ...prev,
             [name]: value
         }))
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const result = await dispatch(login(formData));
+        if (login.fulfilled.match(result)) {
+            const user = result.payload;
+            if (user.role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
+        } else {
+            console.error("Login failed:", result.payload);
+        }
+    }
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
 
@@ -35,7 +54,7 @@ export const Login = () => {
                     Today
                 </p>
 
-                <form className="flex flex-col gap-4">
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-700">
                             Email

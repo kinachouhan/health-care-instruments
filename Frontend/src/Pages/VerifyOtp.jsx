@@ -14,6 +14,7 @@ export const VerifyOtp = () => {
   // get formData passed from Signup
   const formData = location.state?.formData;
 
+
   const handleChange = (e, index) => {
     const value = e.target.value;
     if (!/^\d?$/.test(value)) return;
@@ -32,9 +33,18 @@ export const VerifyOtp = () => {
   const handleVerify = async () => {
     const result = await dispatch(verifyOtp({ email: formData.email, otp }));
     if (verifyOtp.fulfilled.match(result)) {
-      // after OTP verified, create account
-      await dispatch(signup(formData));
-      navigate("/");
+
+      const signupResult = await dispatch(signup(formData));
+
+      if (signup.fulfilled.match(signupResult)) {
+        const user = signupResult.payload;
+        if (user.role === "admin") {
+          navigate("/admin");
+        }
+        else {
+          navigate("/");
+        }
+      }
     }
   };
 

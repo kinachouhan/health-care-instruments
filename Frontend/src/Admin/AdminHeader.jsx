@@ -1,8 +1,18 @@
 
 import { NavLink } from "react-router-dom";
 import { Logo } from "../Components/Logo";
-
+import {logout} from "../Redux/auth"
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 export const AdminHeader = () => {
+    
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const handleLogout = async()=>{
+      await dispatch(logout())
+      navigate("/login")
+  }
+
   return (
     <header className="w-full bg-white  shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-5 flex items-center justify-between">
@@ -17,7 +27,9 @@ export const AdminHeader = () => {
           Admin Panel
         </p>
 
-        <button className="bg-red-500 hover:bg-red-600 text-white text-sm sm:text-base px-4 py-2 rounded-lg transition">
+        <button
+        onClick={handleLogout}
+         className="cursor-pointer bg-red-500 hover:bg-red-600 text-white text-sm sm:text-base px-4 py-2 rounded-lg transition">
           Logout
         </button>
 
