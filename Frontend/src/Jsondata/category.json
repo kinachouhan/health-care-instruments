@@ -1,0 +1,100 @@
+
+[
+  {
+    "name": "Restorative",
+    "sub": [
+        { "name": "Adhesives & Bonding", "image": "/images/glass-ionomer.png" },
+        { "name": "Cements", "image": "/images/glass-ionomer.png" },
+        { "name": "Composite", "image": "/images/glass-ionomer.png" },
+        { "name": "Composite Kit", "image": "/images/glass-ionomer.png" },
+        { "name": "Finishing & Polishing", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "Equipment",
+    "sub": [
+        { "name": "Apex Locator", "image": "/images/glass-ionomer.png" },
+        { "name": "Dental Handpiece", "image": "/images/glass-ionomer.png" },
+        { "name": "Electric Motor", "image": "/images/glass-ionomer.png" },
+        { "name": "Endo Motor", "image": "/images/glass-ionomer.png" },
+        { "name": "Handpiece Oil Spray", "image": "/images/glass-ionomer.png" },
+        { "name": "Implant Motors", "image": "/images/glass-ionomer.png" },
+        { "name": "LED Light Cure Unit", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "Instruments",
+    "sub": [
+        { "name": "Amalgam Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Composite Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Endodontic Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Extraction Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Filling Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Implants Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Prosthodontic Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Instrument Kit & Accessories", "image": "/images/glass-ionomer.png" },
+        { "name": "Orthodontics Instruments", "image": "/images/glass-ionomer.png" },
+        { "name": "Periodontal Instruments", "image": "/images/glass-ionomer.png" },
+        { "name":  "Plastic Filling Instruments", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "Endodontics",
+    "sub": [
+        { "name": "Burs & Cavity Access", "image": "/images/glass-ionomer.png" },
+        { "name": "Cleaning & Shaping", "image": "/images/glass-ionomer.png" },
+        { "name": "Endo Accessories", "image": "/images/glass-ionomer.png" },
+        { "name": "Irrigants & Bleaching", "image": "/images/glass-ionomer.png" },
+        { "name": "Obturations", "image": "/images/glass-ionomer.png" },
+        { "name": "Posts & Core", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "General Dentistry",
+    "sub": [
+        { "name": "Disinfectant", "image": "/images/glass-ionomer.png" },
+        { "name": "Disposables", "image": "/images/glass-ionomer.png" },
+        { "name": "Face Mask & Caps", "image": "/images/glass-ionomer.png" },
+        { "name": "Gloves", "image": "/images/glass-ionomer.png" },
+        { "name": "Trays & Wedges", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "Prosthodontic",
+    "sub": [
+        { "name": "Alginate Powder", "image": "/images/glass-ionomer.png" },
+        { "name": "Bite Registration", "image": "/images/glass-ionomer.png" },
+        { "name": "Denture Base Material", "image": "/images/glass-ionomer.png" },
+        { "name": "Impression Compounds", "image": "/images/glass-ionomer.png" },
+        { "name": "Impression Material", "image": "/images/glass-ionomer.png" },
+        { "name": "Impression Paste", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "Implantology",
+    "sub": [
+        { "name": "Bone Grafts", "image": "/images/glass-ionomer.png" },
+        { "name": "Implant Equipment", "image": "/images/glass-ionomer.png" },
+        { "name": "Implant Motors", "image": "/images/glass-ionomer.png" },
+        { "name": "Implants", "image": "/images/glass-ionomer.png" },
+        { "name": "Prosthesis Components", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "Orthodontics",
+    "sub": [
+        { "name": "Adhesives", "image": "/images/glass-ionomer.png" },
+        { "name": "Brackets", "image": "/images/glass-ionomer.png" },
+        { "name": "Ceremic", "image": "/images/glass-ionomer.png" },
+        { "name": "Elastomerics", "image": "/images/glass-ionomer.png" },
+        { "name": "Metal Brackets", "image": "/images/glass-ionomer.png" }
+    ]
+  },
+  {
+    "name": "Pedodontic",
+    "sub": [
+        { "name": "Crown Removers", "image": "/images/glass-ionomer.png" },
+        { "name": "Temporary Crown Materials", "image": "/images/glass-ionomer.png" }
+     ]
+  }
+]

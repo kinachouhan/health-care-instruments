@@ -26,8 +26,8 @@ export const Header = () => {
         <div className="flex h-20 items-center justify-between gap-6">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <div className="w-32 md:w-40">
-              <Logo className="w-full h-auto" />
+            <div onClick={()=>navigate("/")} className="w-32 md:w-40">
+              <Logo  className="w-full h-auto" />
             </div>
           </div>
 
@@ -113,7 +113,7 @@ export const Header = () => {
                 navigate("/profile");
                 setSidebarOpen(false);
               }}
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 "
             >
               Profile
             </button>
