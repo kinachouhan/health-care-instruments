@@ -67,7 +67,6 @@ export const signup = async (req, res) => {
     }
 }
 
-
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body
@@ -99,7 +98,7 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "5d" })
 
-        res.status(200)
+       return  res.status(200)
             .cookie("token", token, {
                 httpOnly: true,
                 secure: false,
@@ -116,8 +115,6 @@ export const login = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 }
-
-
 
 export const sendEmail = async (to, otp) => {
     const transporter = nodemailer.createTransport({
@@ -142,7 +139,6 @@ export const sendEmail = async (to, otp) => {
 };
 
 
-
 export const sendOtp = async (req, res) => {
     try {
         const { email } = req.body;
@@ -163,7 +159,6 @@ export const sendOtp = async (req, res) => {
         console.error(error); res.status(500).json({ success: false, message: "Server error" });
     }
 };
-
 
 export const verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
@@ -189,9 +184,6 @@ export const verifyOtp = async (req, res) => {
     await record.save();
     res.json({ message: "OTP verified successfully" });
 }
-
-
-
 
 export const resendOtp = async (req, res) => {
     const { email } = req.body;
@@ -234,8 +226,6 @@ export const resendOtp = async (req, res) => {
     res.json({ message: "OTP resent successfully" });
 }
 
-
-
 export const logout = (req, res) => {
     try {
         res
@@ -257,3 +247,19 @@ export const logout = (req, res) => {
         });
     }
 };
+
+export const getMe = async(req, res)=>{
+     try{
+         const userId = req.user._id
+
+         const user = await User.findById(userId)
+
+         return res.status(200).json({
+             success: true,
+             responseData: user
+         })
+     }
+     catch(error){
+          res.status(500).json({ success: false, message: "Server error" });
+     }
+}

@@ -13,8 +13,17 @@ import { AdminLayout } from './Layout/AdminLayout'
 import { Login } from './Pages/Login'
 import { Signup } from './Pages/Signup'
 import { VerifyOtp } from './Pages/VerifyOtp'
+import {getMe} from "./Redux/auth"
+import { useDispatch } from 'react-redux'
+import { useEffect } from 'react'
 
 function App() {
+
+   const dispatch = useDispatch()
+
+   useEffect( ()=>{
+          dispatch(getMe())
+   },[])
 
   const router = createBrowserRouter([
     {

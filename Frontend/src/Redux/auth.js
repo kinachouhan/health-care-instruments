@@ -1,9 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
 
 const API = import.meta.env.VITE_API_URL;
-
-
-
 
 const initialState = {
       user: null,
@@ -11,7 +8,6 @@ const initialState = {
       loading: false,
       error: null,
 };
-
 
 export const sendOtp = createAsyncThunk(
       "auth/sendOtp",
@@ -35,7 +31,6 @@ export const sendOtp = createAsyncThunk(
             }
       }
 );
-
 
 export const verifyOtp = createAsyncThunk(
       "auth/verifyOtp",
@@ -61,7 +56,6 @@ export const verifyOtp = createAsyncThunk(
       }
 );
 
-
 export const resendOtp = createAsyncThunk(
       "auth/resendOtp",
       async (email, { rejectWithValue }) => {
@@ -86,9 +80,6 @@ export const resendOtp = createAsyncThunk(
       }
 );
 
-
-
-
 export const signup = createAsyncThunk(
   "auth/signup",
   async (formData, { rejectWithValue }) => {
@@ -112,6 +103,29 @@ export const signup = createAsyncThunk(
     }
   }
 );
+
+export const getMe = createAsyncThunk(
+      "auth/getMe",
+      async(_ , {rejectWithValue})=>{
+            try{
+               const res = await fetch(`${API}/api/v1/user/me`, {
+                    method: "GET",
+                    credentials: "include",
+               })
+
+               const data = await res.json()
+
+               if(!res.ok  || !data.success){
+                    return rejectWithValue(data.message || "Failed to get user")
+               }
+
+               return data.responseData
+            }
+            catch(error){
+                   return rejectWithValue(error.message)
+            }
+      }
+)
 
 
 export const login = createAsyncThunk(
@@ -243,8 +257,20 @@ const authSlice = createSlice({
                   .addCase(logout.rejected, (state, action) => { 
                         state.loading = false; 
                         state.error = action.payload; 
-                  });
-      },
+                  })
+                  .addCase(getMe.pending , (state, action)=>{
+                         state.loading = true
+                  })
+                  .addCase(getMe.fulfilled , (state,action)=>{
+                        state.loading = false,
+                        state.user = state.payload 
+                        state.isAuthenticated = true
+                  })
+                  .addCase(getMe.rejected , (state, action)=>{
+                          state.loading = false,
+                          state.isAuthenticated = false  
+                  })  
+      }
 });
 
 
