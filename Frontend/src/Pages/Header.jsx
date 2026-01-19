@@ -23,7 +23,7 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between gap-6">
+        <div className="flex h-18 items-center justify-between gap-6">
           {/* Logo */}
           <div className="flex-shrink-0">
             <div onClick={()=>navigate("/")} className="w-32 md:w-40">

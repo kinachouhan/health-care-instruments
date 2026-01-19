@@ -16,6 +16,7 @@ import { VerifyOtp } from './Pages/VerifyOtp'
 import {getMe} from "./Redux/auth"
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
+import { Products } from './Pages/Products'
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
         { path: "/contact", element: <Contact /> },
         { path: "/cart", element: <Cart /> },
         { path: "/wishlist", element: <WishList /> },
+        { path: "/products", element: <Products/> },
       ],
     },
     {

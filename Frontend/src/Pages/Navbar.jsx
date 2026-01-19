@@ -7,8 +7,8 @@ export const Navbar = () => {
     const navigate = useNavigate();
 
     return (
-        <nav className="fixed top-20 w-full bg-white shadow-md">
-            <div className="max-w-7xl mx-auto px-4 flex justify-around gap-6 py-3 text-sm font-medium items-center">
+        <nav className="sticky top-18 w-full bg-white shadow-md ">
+            <div className="max-w-7xl mx-auto flex justify-around text-sm font-medium items-center">
                 <div className="flex items-center ">
                    
                     <CategoryDropdown/>

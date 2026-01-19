@@ -2,99 +2,109 @@
 [
   {
     "name": "Restorative",
+    "icon": "FaTooth",
     "sub": [
-        { "name": "Adhesives & Bonding", "image": "/images/glass-ionomer.png" },
-        { "name": "Cements", "image": "/images/glass-ionomer.png" },
-        { "name": "Composite", "image": "/images/glass-ionomer.png" },
-        { "name": "Composite Kit", "image": "/images/glass-ionomer.png" },
-        { "name": "Finishing & Polishing", "image": "/images/glass-ionomer.png" }
+        { "name": "Adhesives & Bonding", "image": "https://tse3.mm.bing.net/th/id/OIP.jFEA2fHB0Xt5hn8LunST8AHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Cements", "image": "https://www.shofu.com.sg/wp-content/uploads/2019/12/HY-Bond-Temporary-Cement-Soft.png" },
+        { "name": "Composite", "image": "https://image.made-in-china.com/2f0j00tkvWaROUIBfY/Popular-Used-Dental-Filling-Composite-Resin-Flowable-Dental-Composite-Resin-with-Syringe-Colour-A1-A2-A3-2-5g-Piece.webp" },
+        { "name": "Composite Kit", "image": "https://tse3.mm.bing.net/th/id/OIP.Mlgm8tT-HSq-CKba2JKZlAHaEh?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Finishing & Polishing", "image": "https://tse3.mm.bing.net/th/id/OIP.WO1P_csDhz6uB9YxlqRVQwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" }
     ]
   },
   {
     "name": "Equipment",
+    "icon": "FaCogs",
     "sub": [
-        { "name": "Apex Locator", "image": "/images/glass-ionomer.png" },
-        { "name": "Dental Handpiece", "image": "/images/glass-ionomer.png" },
-        { "name": "Electric Motor", "image": "/images/glass-ionomer.png" },
-        { "name": "Endo Motor", "image": "/images/glass-ionomer.png" },
-        { "name": "Handpiece Oil Spray", "image": "/images/glass-ionomer.png" },
-        { "name": "Implant Motors", "image": "/images/glass-ionomer.png" },
-        { "name": "LED Light Cure Unit", "image": "/images/glass-ionomer.png" }
+        { "name": "Apex Locator", "image": "https://th.bing.com/th/id/OIP.sw9DaS_3si3PkK3IdxP1RwHaHa?w=181&h=194&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" },
+        { "name": "Dental Handpiece", "image": "https://tse2.mm.bing.net/th/id/OIP.QfVNCf0R6mMbHTPETIGlkQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Electric Motor", "image": "https://th.bing.com/th/id/R.fa27789581dc3d00dfc2869f1e0dd8cf?rik=FeVauc9gJEsfhg&riu=http%3a%2f%2fazdentall.com%2fcdn%2fshop%2ffiles%2f1_11151033-ad13-4bdd-b8a4-d7ccfcb8d3e9.jpg%3fv%3d1703657190&ehk=xR4O12H0bZxp%2fkms02kyCp6eqGmuSx2r%2bF0jyqgBlWM%3d&risl=&pid=ImgRaw&r=0" },
+        { "name": "Endo Motor", "image": "https://tse4.mm.bing.net/th/id/OIP.kIU-l1hSBZBUH_w5GlpmrAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Handpiece Oil Spray", "image": "https://www.globaldentalshop.com/cdn/shop/products/oil2_512x512.webp?v=1692127389" },
+        { "name": "Implant Motors", "image": "https://tse3.mm.bing.net/th/id/OIP.5Er1jiMMwmTgW_IsBTf9cwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "LED Light Cure Unit", "image": "https://images1.dentalkart.com/media/catalog/product/w/r/wrety536u.jpg" }
     ]
   },
   {
     "name": "Instruments",
+    "icon": "FaTools",
     "sub": [
-        { "name": "Amalgam Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Composite Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Endodontic Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Extraction Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Filling Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Implants Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Prosthodontic Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Instrument Kit & Accessories", "image": "/images/glass-ionomer.png" },
-        { "name": "Orthodontics Instruments", "image": "/images/glass-ionomer.png" },
-        { "name": "Periodontal Instruments", "image": "/images/glass-ionomer.png" },
-        { "name":  "Plastic Filling Instruments", "image": "/images/glass-ionomer.png" }
+        { "name": "Amalgam Instruments", "image": "https://th.bing.com/th/id/R.eeae3db266401bed22856161d97b7661?rik=fsbB3%2btT8%2fh67w&riu=http%3a%2f%2fwww.osungusa.com%2fcdn%2fshop%2fproducts%2f12222_25c2e497-584e-454d-8a44-f55dca7306d7_1200x1200.webp%3fv%3d1693931381&ehk=LbQPDq%2fdotsJlLLXbL9pUUCuoG0OWvBFy62bU%2ftM3Eg%3d&risl=&pid=ImgRaw&r=0" },
+        { "name": "Composite Instruments", "image": "https://tse4.mm.bing.net/th/id/OIP.4FYcy_W553Q-54HAGBdb9AHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Endodontic Instruments", "image": "https://www.precisiondental.co.uk/images/thumbs/0000959_endodontic-instruments_300.jpg" },
+        { "name": "Extraction Instruments", "image": "https://www.net32.com/cdn-cgi/image/dpr=2,,width=384,/media/shared/common/mp/j-j-instruments/j-j-instruments/media/j-j-instruments-151-universal-extraction-forceps-lower-incisors-cuspids-v1-06-151.jpg" },
+        { "name": "Filling Instruments", "image": "https://tse2.mm.bing.net/th/id/OIP.BMqZIDjQujbSFI8-G9xtJgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Implants Instruments", "image": "https://ali-surgical.com/wp-content/uploads/2024/08/implant-surgery-instruments-set-11.jpg" },
+        { "name": "Prosthodontic Instruments", "image": "https://tse4.mm.bing.net/th/id/OIP.w5Yh5jbEqkUg1mxNLn7KAAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Instrument Kit & Accessories", "image": "https://tse2.mm.bing.net/th/id/OIP.YbiBuAu4rrZ0e4h5RPkeUgHaKd?w=700&h=989&rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Orthodontics Instruments", "image": "https://tse3.mm.bing.net/th/id/OIP.nVlD0LpGAVwPfXk4xlV5NwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Periodontal Instruments", "image": "https://tse3.mm.bing.net/th/id/OIP.zZaMoz06u-eSPss9wcEsuQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name":  "Plastic Filling Instruments", "image": "https://tse4.mm.bing.net/th/id/OIP.FIsQvc6xXzF6a0QPRx81oAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" }
     ]
   },
   {
     "name": "Endodontics",
+    "icon": "FaSyringe",
     "sub": [
-        { "name": "Burs & Cavity Access", "image": "/images/glass-ionomer.png" },
-        { "name": "Cleaning & Shaping", "image": "/images/glass-ionomer.png" },
-        { "name": "Endo Accessories", "image": "/images/glass-ionomer.png" },
-        { "name": "Irrigants & Bleaching", "image": "/images/glass-ionomer.png" },
-        { "name": "Obturations", "image": "/images/glass-ionomer.png" },
-        { "name": "Posts & Core", "image": "/images/glass-ionomer.png" }
+        { "name": "Burs & Cavity Access", "image": "https://www.dentaltrademart.com/image/cache/catalog/Brands/Dentsply/endo-access-burs-a4232-550x550.jpg" },
+        { "name": "Cleaning & Shaping", "image": "https://www.dentalaaka.com/uploaded_files/products/dentsply-protaper-shaping-file-x-sx-19mm-rotary-golden-21.jpg" },
+        { "name": "Endo Accessories", "image": "https://www.ddgroup.com/globalassets/productimages/exk000/exk000_1.jpg" },
+        { "name": "Irrigants & Bleaching", "image": "https://tse4.mm.bing.net/th/id/OIP.hvQLlJMp1zl6hrC4hEWStQHaFj?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Obturations", "image": "https://tse3.mm.bing.net/th/id/OIP.aVzLxHKF7Zof3QGjyOE-DwHaHa?w=700&h=700&rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Posts & Core", "image": "https://tse2.mm.bing.net/th/id/OIP.0nnbSUB9F26E7Rcyj_CgyAHaGy?rs=1&pid=ImgDetMain&o=7&rm=3" }
     ]
   },
   {
     "name": "General Dentistry",
+    "icon": "FaSmile",
     "sub": [
-        { "name": "Disinfectant", "image": "/images/glass-ionomer.png" },
-        { "name": "Disposables", "image": "/images/glass-ionomer.png" },
-        { "name": "Face Mask & Caps", "image": "/images/glass-ionomer.png" },
-        { "name": "Gloves", "image": "/images/glass-ionomer.png" },
-        { "name": "Trays & Wedges", "image": "/images/glass-ionomer.png" }
+        { "name": "Disinfectant", "image": "https://tse1.mm.bing.net/th/id/OIP.vUJfnAMEKYWFB-3MfNBv7wHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Disposables", "image": "https://tse1.mm.bing.net/th/id/OIP.4OdWKNby6RuqAs35j-KiXQHaF7?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Face Mask & Caps", "image": "https://tse3.mm.bing.net/th/id/OIP.a5L7OjjRiRmOdRrFs8ZIowHaHZ?w=500&h=499&rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Gloves", "image": "https://tse2.mm.bing.net/th/id/OIP.yHpjH6q3nF3ueGyXpjx9ywHaHa?w=600&h=600&rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Trays & Wedges", "image": "https://www.pearsondental.com/catalog/img/M36-0022.jpg" }
     ]
   },
   {
     "name": "Prosthodontic",
+    "icon": "FaTeeth",
     "sub": [
-        { "name": "Alginate Powder", "image": "/images/glass-ionomer.png" },
-        { "name": "Bite Registration", "image": "/images/glass-ionomer.png" },
-        { "name": "Denture Base Material", "image": "/images/glass-ionomer.png" },
-        { "name": "Impression Compounds", "image": "/images/glass-ionomer.png" },
-        { "name": "Impression Material", "image": "/images/glass-ionomer.png" },
-        { "name": "Impression Paste", "image": "/images/glass-ionomer.png" }
+        { "name": "Alginate Powder", "image": "https://tse1.mm.bing.net/th/id/OIP.BQDqAp7GYecNSzQYxukWgAHaHa?pid=ImgDet&w=474&h=474&rs=1&o=7&rm=3" },
+        { "name": "Bite Registration", "image": "https://tse1.mm.bing.net/th/id/OIP.fCQmjVt7El9iahncqSkiDwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Denture Base Material", "image": "https://tse3.mm.bing.net/th/id/OIP.LfGTqJ3cLNwMaxXK0UEyPwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Impression Compounds", "image": "https://www.kerrdental.com/pl-pl/sites/default/files/styles/product_-_main_image/public/Impression_Compound_03_7.jpg?itok=Zwx_VWaX" },
+        { "name": "Impression Material", "image": "https://tse2.mm.bing.net/th/id/OIP.oaTJgGt-Eg-g9QiVlwsyMgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Impression Paste", "image": "https://tse4.mm.bing.net/th/id/OIP.Qb_awyYtiI3wU3I-3rsAkwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Tray Adhesive", "image": "https://tse1.mm.bing.net/th/id/OIP.afCK2JMKmYj12QR_lUwa1QHaFT?rs=1&pid=ImgDetMain&o=7&rm=3" }
     ]
   },
   {
     "name": "Implantology",
+    "icon": "FaCapsules",
     "sub": [
-        { "name": "Bone Grafts", "image": "/images/glass-ionomer.png" },
-        { "name": "Implant Equipment", "image": "/images/glass-ionomer.png" },
-        { "name": "Implant Motors", "image": "/images/glass-ionomer.png" },
-        { "name": "Implants", "image": "/images/glass-ionomer.png" },
-        { "name": "Prosthesis Components", "image": "/images/glass-ionomer.png" }
+        { "name": "Bone Grafts", "image": "https://tse2.mm.bing.net/th/id/OIP.hL3AqQPkNyvpw0M5Te3WhwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Implant Equipment", "image": "https://th.bing.com/th/id/R.70cd664e806c355cde61f8a0cd5a6d31?rik=B2GIthE1eeywJQ&riu=http%3a%2f%2fdentalaccessories.org%2fcdn%2fshop%2fcollections%2fCollectionTitles-05.png%3fv%3d1724537559&ehk=1PMXA3pk1eV2vRYAcyoyagqOIoriu1px%2bkguyexJn%2f4%3d&risl=&pid=ImgRaw&r=0" },
+        { "name": "Implant Motors", "image": "https://th.bing.com/th/id/R.c14d1c1c399cffc29f151346dc21d4e8?rik=TPOk5JaG8u7EYg&riu=http%3a%2f%2fwww.lionsdentalsupply.com%2ffiles%2f36189100.jpg&ehk=ossPrax4maiNDYrXrC8kYJoHUB1cmCoTJhA%2bmD%2b9epA%3d&risl=&pid=ImgRaw&r=0" },
+        { "name": "Implants", "image": "https://tse2.mm.bing.net/th/id/OIP.ISuUU5AMXgw6uCHfycc8lAHaGK?w=2560&h=2133&rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Prosthesis Components", "image": "https://et53s7xiz4y.exactdn.com/wp-content/uploads/2022/05/TBRdental-proth-scellee.png?lossy=1&ssl=1" }
     ]
   },
   {
     "name": "Orthodontics",
+    "icon": "FaGift",
     "sub": [
-        { "name": "Adhesives", "image": "/images/glass-ionomer.png" },
-        { "name": "Brackets", "image": "/images/glass-ionomer.png" },
-        { "name": "Ceremic", "image": "/images/glass-ionomer.png" },
-        { "name": "Elastomerics", "image": "/images/glass-ionomer.png" },
-        { "name": "Metal Brackets", "image": "/images/glass-ionomer.png" }
+        { "name": "Adhesives", "image": "https://tse4.mm.bing.net/th/id/OIP.Mhce3piCP_JcUPeG98UYpwHaEj?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Brackets", "image": "https://tse4.mm.bing.net/th/id/OIP.YCbdnI2lFGh9ccJkaElTvAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Ceremic", "image": "https://tse1.mm.bing.net/th/id/OIP.8BQpHDwoUS3fh9p4egtM5wAAAA?w=455&h=379&rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { "name": "Elastomerics", "image": "https://www.dentmark.com/images/ProductImages/ProductColor-1598179473.jpg" },
+        { "name": "Metal Brackets", "image": "https://tse4.mm.bing.net/th/id/OIP.14JSdXRbt_SQVS50ccNiWgHaG1?pid=ImgDet&w=474&h=437&rs=1&o=7&rm=3" }
     ]
   },
   {
     "name": "Pedodontic",
+    "icon": "FaChild",
     "sub": [
-        { "name": "Crown Removers", "image": "/images/glass-ionomer.png" },
-        { "name": "Temporary Crown Materials", "image": "/images/glass-ionomer.png" }
+        { "name": "Crown Removers", "image": "https://m.media-amazon.com/images/I/81w5y3VgMOL.jpg" },
+        { "name": "Temporary Crown Materials", "image": "https://tse1.mm.bing.net/th/id/OIP.aeTJXc-gq95_vIvFmLWfyAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" }
      ]
   }
 ]
