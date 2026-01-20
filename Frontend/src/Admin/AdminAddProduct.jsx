@@ -1,10 +1,17 @@
 import categories from "../Jsondata/category.json";
 import { useState, useEffect } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import { addProduct } from "../Redux/product";
+import { useDispatch, useSelector } from "react-redux"
+import toast from "react-hot-toast"
 
 export const AdminAddProduct = () => {
   const [images, setImages] = useState([null, null, null, null]);
   const [previews, setPreviews] = useState([null, null, null, null]);
+
+  const { loading } = useSelector(state => state.product)
+
+  const dispatch = useDispatch()
 
   const [productDetails, setProductDetails] = useState({
     productName: "",
@@ -17,22 +24,19 @@ export const AdminAddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setProductDetails((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === "category" && { subCategory: "" }), 
+      ...(name === "category" && { subCategory: "" }),
     }));
   };
 
- 
+
   const handleImages = (index, file) => {
     const newImages = [...images];
     const newPreviews = [...previews];
-
     newImages[index] = file;
     newPreviews[index] = file ? URL.createObjectURL(file) : null;
-
     setImages(newImages);
     setPreviews(newPreviews);
   };
@@ -50,138 +54,186 @@ export const AdminAddProduct = () => {
   );
 
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // validation
+    if (
+      !productDetails.productName.trim() ||
+      !productDetails.description.trim() ||
+      !productDetails.category ||
+      !productDetails.subCategory ||
+      !productDetails.price ||
+      images.every((img) => img === null)
+    ) {
+      toast.error("All fields are required, including at least one image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("productName", productDetails.productName);
+    formData.append("description", productDetails.description);
+    formData.append("price", productDetails.price);
+    formData.append("category", productDetails.category);
+    formData.append("subCategory", productDetails.subCategory);
+
+    images.forEach((img) => img && formData.append("images", img));
+
+    try {
+      
+      const result = await dispatch(addProduct(formData)).unwrap();
+      toast.success("Product added successfully!");
+
+      setProductDetails({
+        productName: "",
+        description: "",
+        price: "",
+        category: "",
+        subCategory: "",
+      });
+      previews.forEach((url) => url && URL.revokeObjectURL(url));
+      setImages([null, null, null, null]);
+      setPreviews([null, null, null, null]);
+    } catch (error) {
+     
+      toast.error(error?.message || error || "Failed to add product");
+    }
+  };
+
+
+
+
   return (
     <div className="mb-20">
-      <form className="max-w-5xl mx-auto bg-white shadow-md rounded-lg px-6 py-4 space-y-4">
+      <form onSubmit={handleSubmit} className="max-w-5xl mx-auto bg-white shadow-md rounded-lg px-6 py-4 space-y-4">
         <h2 className="text-2xl font-semibold text-center py-5">Add New Product</h2>
 
-       <div className="flex flex-col gap-10">
-         <div>
-          <h3 className=" font-semibold mb-2">Upload Images</h3>
+        <div className="flex flex-col gap-10">
+          <div>
+            <h3 className=" font-semibold mb-2">Upload Images</h3>
 
-          <div className="flex gap-4 flex-wrap">
-            {images.map((_, index) => (
-              <div
-                key={index}
-                className="w-28 h-28 border border-gray-200 rounded-lg overflow-hidden"
-              >
-                <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={(e) => handleImages(index, e.target.files[0])}
-                  />
-
-                  {previews[index] ? (
-                    <img
-                      src={previews[index]}
-                      alt="preview"
-                      className="w-full h-full object-cover"
+            <div className="flex gap-4 flex-wrap">
+              {images.map((_, index) => (
+                <div
+                  key={index}
+                  className="w-28 h-28 border border-gray-200 rounded-lg overflow-hidden"
+                >
+                  <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(e) => handleImages(index, e.target.files[0])}
                     />
-                  ) : (
-                    <>
-                      <FaCloudUploadAlt className="text-3xl text-gray-400" />
-                      <span className="text-xs text-gray-400">Upload</span>
-                    </>
-                  )}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
 
-    
-        <div>
-          <label className="block font-medium mb-1">
-            Product Name:
-            <input
-              type="text"
-              name="productName"
-              value={productDetails.productName}
-              onChange={handleChange}
-              placeholder="Enter Product Name"
-              className="w-full border border-gray-200 rounded px-3 py-2"
-            />
-          </label>
-
-        </div>
-      
-        <div>
-          <label className="block font-medium mb-1">
-            Description:
-            <textarea
-            name="description"
-            value={productDetails.description}
-            onChange={handleChange}
-            placeholder="Enter Product Description"
-            className="w-full border border-gray-200 rounded px-3 py-2 min-h-[120px]"
-          />
-          </label>
-        </div>
-
-        <div className="flex gap-5 w-full justify-between">
-        
-          <div className="w-full">
-            <label className="block font-medium mb-1">Category</label>
-            <select
-              name="category"
-              value={productDetails.category}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded px-3 py-2"
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat.name} value={cat.name}>
-                  {cat.name}
-                </option>
+                    {previews[index] ? (
+                      <img
+                        src={previews[index]}
+                        alt="preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <>
+                        <FaCloudUploadAlt className="text-3xl text-gray-400" />
+                        <span className="text-xs text-gray-400">Upload</span>
+                      </>
+                    )}
+                  </label>
+                </div>
               ))}
-            </select>
+            </div>
           </div>
 
-  
-          {selectedCategory && (
+
+          <div>
+            <label className="block font-medium mb-1">
+              Product Name:
+              <input
+                type="text"
+                name="productName"
+                value={productDetails.productName}
+                onChange={handleChange}
+                placeholder="Enter Product Name"
+                className="w-full border border-gray-200 rounded px-3 py-2"
+              />
+            </label>
+
+          </div>
+
+          <div>
+            <label className="block font-medium mb-1">
+              Description:
+              <textarea
+                name="description"
+                value={productDetails.description}
+                onChange={handleChange}
+                placeholder="Enter Product Description"
+                className="w-full border border-gray-200 rounded px-3 py-2 min-h-[120px]"
+              />
+            </label>
+          </div>
+
+          <div className="flex gap-5 w-full justify-between">
+
             <div className="w-full">
-              <label className="block font-medium mb-1">Sub Category</label>
+              <label className="block font-medium mb-1">Category</label>
               <select
-                name="subCategory"
-                value={productDetails.subCategory}
+                name="category"
+                value={productDetails.category}
                 onChange={handleChange}
                 className="w-full border border-gray-200 rounded px-3 py-2"
               >
-                <option value="">Select Subcategory</option>
-                {selectedCategory.sub.map((sub) => (
-                  <option key={sub.name} value={sub.name}>
-                    {sub.name}
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.name} value={cat.name}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
             </div>
-          )}
 
-    
-          <div className="w-full">
-            <label className="block font-medium mb-1">Price</label>
-            <input
-              type="number"
-              name="price"
-              value={productDetails.price}
-              onChange={handleChange}
-              className="w-full border border-gray-200 rounded px-3 py-2"
-            />
+
+            {selectedCategory && (
+              <div className="w-full">
+                <label className="block font-medium mb-1">Sub Category</label>
+                <select
+                  name="subCategory"
+                  value={productDetails.subCategory}
+                  onChange={handleChange}
+                  className="w-full border border-gray-200 rounded px-3 py-2"
+                >
+                  <option value="">Select Subcategory</option>
+                  {selectedCategory.sub.map((sub) => (
+                    <option key={sub.name} value={sub.name}>
+                      {sub.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+
+            <div className="w-full">
+              <label className="block font-medium mb-1">Price</label>
+              <input
+                type="number"
+                name="price"
+                value={productDetails.price}
+                onChange={handleChange}
+                className="w-full border border-gray-200 rounded px-3 py-2"
+              />
+            </div>
+          </div>
+
+
+          <div className="flex items-center justify-center">
+            <button type="submit"
+              disabled={loading}
+              className="bg-sky-600 text-white p-2 px-4 rounded hover:bg-sky-700 transition" >
+              {loading ? "Adding..." : "Add Product"}
+            </button>
           </div>
         </div>
-
-  
-        <div className="flex items-center justify-center">
-          <button
-            type="submit"
-            className="bg-sky-600 text-white p-2 px-4 rounded hover:bg-sky-700 transition"
-          >
-            Add Product
-          </button>
-        </div>
-       </div>
       </form>
     </div>
   );

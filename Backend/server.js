@@ -5,6 +5,7 @@ import {dbConnect} from "./DbConfig/dbConnect.js"
 import userRoute from "./Routes/userRoute.js"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import productRoute from "./Routes/productRoute.js"
 
 
 
@@ -21,6 +22,9 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 
 app.use("/api/v1/user" , userRoute)
+app.use("/api/v1/product", productRoute)
+
+
 
 app.listen(PORT , ()=>{
      console.log(`Server is listening on ${PORT} port.`)

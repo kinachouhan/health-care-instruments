@@ -17,6 +17,7 @@ import {getMe} from "./Redux/auth"
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { Products } from './Pages/Products'
+import { Toaster } from "react-hot-toast";
 
 function App() {
 
@@ -64,6 +65,7 @@ function App() {
 
   return (
     <>
+       <Toaster position="top-center" />
       <RouterProvider router={router} />
     </>
   )
