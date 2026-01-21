@@ -1,42 +1,39 @@
-import { useNavigate } from "react-router-dom";
-
+import { NavLink } from "react-router-dom";
 import { CategoryDropdown } from "../Components/CategoryDropDown.jsx";
 
-
 export const Navbar = () => {
-    const navigate = useNavigate();
+  const linkClass = ({ isActive }) =>
+    `hover:text-sky-600 transition ${
+      isActive
+        ? "text-sky-600 border-b-2 border-sky-600 pb-1"
+        : "text-gray-700"
+    }`;
 
-    return (
-        <nav className="sticky top-18 w-full bg-white shadow-md ">
-            <div className="max-w-7xl mx-auto flex justify-around text-sm font-medium items-center">
-                <div className="flex items-center ">
-                   
-                    <CategoryDropdown/>
-                </div>
-                {/* All Products */}
-                <button
-                    onClick={() => navigate("/products")}
-                    className="hover:text-sky-600"
-                >
-                    All Products
-                </button>
+  return (
+    <nav className="sticky top-18 w-full bg-white shadow-md z-10">
+      <div className="max-w-7xl mx-auto flex justify-around items-center text-sm font-medium h-14">
+        
+        {/* CATEGORY DROPDOWN */}
+        <div className="flex items-center">
+          <CategoryDropdown />
+        </div>
 
-                {/* About Us */}
-                <button
-                    onClick={() => navigate("/about")}
-                    className="hover:text-sky-600"
-                >
-                    About Us
-                </button>
+        {/* ALL PRODUCTS */}
+        <NavLink to="/products" className={linkClass}>
+          All Products
+        </NavLink>
 
-                {/* Contact Us */}
-                <button
-                    onClick={() => navigate("/contact")}
-                    className="hover:text-sky-600"
-                >
-                    Contact Us
-                </button>
-            </div>
-        </nav>
-    );
+        {/* ABOUT */}
+        <NavLink to="/about" className={linkClass}>
+          About Us
+        </NavLink>
+
+        {/* CONTACT */}
+        <NavLink to="/contact" className={linkClass}>
+          Contact Us
+        </NavLink>
+
+      </div>
+    </nav>
+  );
 };

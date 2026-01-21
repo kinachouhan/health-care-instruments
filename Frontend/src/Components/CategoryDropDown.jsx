@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTools, FaGift, FaTooth, FaCogs, FaSyringe, FaSmile, FaTeeth, FaCapsules, FaChild } from "react-icons/fa";
-import { MdKeyboardArrowRight } from "react-icons/md";
+import {
+  FaTools, FaGift, FaTooth, FaCogs, FaSyringe,
+  FaSmile, FaTeeth, FaCapsules, FaChild
+} from "react-icons/fa";
+import { MdKeyboardArrowRight, MdOutlineCategory } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
-import { MdOutlineCategory } from "react-icons/md";
 import categories from "../Jsondata/category.json";
 
 export const CategoryDropdown = () => {
@@ -20,69 +22,82 @@ export const CategoryDropdown = () => {
     FaTeeth: <FaTeeth />,
     FaCapsules: <FaCapsules />,
     FaGift: <FaGift />,
-    FaChild: <FaChild/>
+    FaChild: <FaChild />,
   };
-
-
-
 
   return (
     <div className="relative inline-block">
-      {/* Trigger Button */}
+      {/* Trigger */}
       <button
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => setOpen((p) => !p)}
         className="p-4 bg-gray-100 flex gap-6 items-center rounded hover:text-sky-600"
       >
-        <span className="text-xl"> <MdOutlineCategory /></span>
+        <MdOutlineCategory className="text-xl" />
         All Categories
         <IoIosArrowDown />
       </button>
 
-      {/* Dropdown Panel */}
       {open && (
-        <div className="absolute top-full left-0 flex bg-white  rounded-md p-2 shadow-lg z-50">
-          {/* Left: Main Categories */}
+        <div className="absolute top-full left-0 flex bg-white rounded-md p-2 shadow-lg z-50">
+          
+          {/* LEFT: Categories */}
           <div className="flex flex-col">
             {categories.map((cat) => (
               <div
                 key={cat.name}
                 onMouseEnter={() => setHoveredCategory(cat.name)}
-                className={`flex items-center justify-between p-4 border border-gray-100 gap-4 cursor-pointer hover:text-sky-600 hover:bg-gray-100 ${hoveredCategory === cat.name ? "bg-gray-100 font-semibold" : ""
-                  }`}
+                onClick={() => {
+                  navigate(`/products?category=${cat.name}`);
+                  setOpen(false);
+                }}
+                className="flex items-center justify-between p-4 gap-4 cursor-pointer hover:bg-gray-100"
               >
                 <div className="flex items-center gap-4">
-                  <span className="text-xl text-gray-600">{iconMap[cat.icon]}</span>
+                  <span className="text-xl text-gray-600">
+                    {iconMap[cat.icon]}
+                  </span>
                   <span>{cat.name}</span>
                 </div>
-                <MdKeyboardArrowRight className="text-gray-500" />
+                <MdKeyboardArrowRight />
               </div>
             ))}
           </div>
 
-
-          {/* Right: Subcategories */}
-          <div className="w-full md:w-[800px] border-t ">
-            <div className="flex gap-2 items-center px-8 py-4">
-              <h3 className=" font-semibold text-sky-600 w-auto text-2xl">
-                {hoveredCategory.toUpperCase()}
+          {/* RIGHT: Subcategories */}
+          <div className="w-[800px]">
+            <div className="flex items-center px-8 py-4 gap-2">
+              <h3 className="text-2xl font-semibold text-sky-600">
+                {hoveredCategory?.toUpperCase()}
               </h3>
-              <div className="h-[1px] bg-gray-200 w-full flex "></div>
+              <div className="flex-1 h-px bg-gray-200"></div>
             </div>
-            <div className="grid grid-cols-5 gap-4 p-2">
-              {
-                categories.find((c) => c.name === hoveredCategory)?.sub.map((sub) => (
-                  <div key={sub.name}
-                    onClick={() => navigate(`/category/${sub.name.toLowerCase().replace(/\s+/g, "-")}`)}
-                    className="flex flex-col items-center gap-2 py-2 px-3 rounded-md hover:bg-gray-100 cursor-pointer text-sm text-gray-700" >
+
+            <div className="grid grid-cols-5 gap-4 p-4">
+              {categories
+                .find((c) => c.name === hoveredCategory)
+                ?.sub.map((sub) => (
+                  <div
+                    key={sub.name}
+                    onClick={() => {
+                      navigate(
+                        `/products?category=${hoveredCategory}&subcategory=${sub.name}`
+                      );
+                      setOpen(false);
+                    }}
+                    className="flex flex-col items-center gap-2 p-2 rounded hover:bg-gray-100 cursor-pointer"
+                  >
                     <div className="bg-white shadow-md rounded-full p-2">
-                      <img src={sub.image} alt={sub.name} className="w-12 h-12 object-contain" />
+                      <img
+                        src={sub.image}
+                        alt={sub.name}
+                        className="w-12 h-12 object-contain"
+                      />
                     </div>
-                    <h1 className="text-center">{sub.name}</h1>
+                    <p className="text-sm text-center">{sub.name}</p>
                   </div>
                 ))}
             </div>
           </div>
-
         </div>
       )}
     </div>

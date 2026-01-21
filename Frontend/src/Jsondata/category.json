@@ -3,6 +3,8 @@
   {
     "name": "Restorative",
     "icon": "FaTooth",
+    "image": "https://tse4.mm.bing.net/th/id/OIP.6gog2UHKkaInOu6znVbXNAHaE8?rs=1&pid=ImgDetMain&o=7&rm=3",
+    "description": "In dentistry, “restorative” refers to procedures and materials used to repair, restore, or replace damaged, decayed, or missing teeth to improve their function and appearance",
     "sub": [
         { "name": "Adhesives & Bonding", "image": "https://tse3.mm.bing.net/th/id/OIP.jFEA2fHB0Xt5hn8LunST8AHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
         { "name": "Cements", "image": "https://www.shofu.com.sg/wp-content/uploads/2019/12/HY-Bond-Temporary-Cement-Soft.png" },
@@ -14,6 +16,8 @@
   {
     "name": "Equipment",
     "icon": "FaCogs",
+    "image": "https://tse3.mm.bing.net/th/id/OIP._DwUTqAnrls06HAhxf15rwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3",
+    "description": "Dental equipment encompasses a broad range of instruments, tools, and devices used by dental professionals for performing examinations, procedures, and treatments. This equipment includes everything from simple hand tools to advanced surgical and imaging technology",
     "sub": [
         { "name": "Apex Locator", "image": "https://th.bing.com/th/id/OIP.sw9DaS_3si3PkK3IdxP1RwHaHa?w=181&h=194&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" },
         { "name": "Dental Handpiece", "image": "https://tse2.mm.bing.net/th/id/OIP.QfVNCf0R6mMbHTPETIGlkQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
@@ -27,6 +31,8 @@
   {
     "name": "Instruments",
     "icon": "FaTools",
+    "image": "https://thumbs.dreamstime.com/z/dental-clinic-tools-medical-items-dentists-oral-inspection-tooth-vector-realistic-chrome-instruments-equipment-dentist-mirror-184981617.jpg",
+    "description": "Discover premium dental instruments designed for precision and durability. Ideal for procedures in restorative, surgical, and orthodontic dentistry, our high-quality tools ensure efficiency, safety, and comfort. Perfect for clinics, labs, and professionals seeking reliable dental instruments online",
     "sub": [
         { "name": "Amalgam Instruments", "image": "https://th.bing.com/th/id/R.eeae3db266401bed22856161d97b7661?rik=fsbB3%2btT8%2fh67w&riu=http%3a%2f%2fwww.osungusa.com%2fcdn%2fshop%2fproducts%2f12222_25c2e497-584e-454d-8a44-f55dca7306d7_1200x1200.webp%3fv%3d1693931381&ehk=LbQPDq%2fdotsJlLLXbL9pUUCuoG0OWvBFy62bU%2ftM3Eg%3d&risl=&pid=ImgRaw&r=0" },
         { "name": "Composite Instruments", "image": "https://tse4.mm.bing.net/th/id/OIP.4FYcy_W553Q-54HAGBdb9AHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
@@ -44,6 +50,8 @@
   {
     "name": "Endodontics",
     "icon": "FaSyringe",
+    "image": "https://tse3.mm.bing.net/th/id/OIP.NGCpusPD-JeNqUuy-6CjuwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
+    "description": "Endodontics is a specialized dental field that focuses on diagnosing, treating, and preventing issues related to the dental pulp and surrounding tissues.",
     "sub": [
         { "name": "Burs & Cavity Access", "image": "https://www.dentaltrademart.com/image/cache/catalog/Brands/Dentsply/endo-access-burs-a4232-550x550.jpg" },
         { "name": "Cleaning & Shaping", "image": "https://www.dentalaaka.com/uploaded_files/products/dentsply-protaper-shaping-file-x-sx-19mm-rotary-golden-21.jpg" },
@@ -56,6 +64,8 @@
   {
     "name": "General Dentistry",
     "icon": "FaSmile",
+     "image": "https://www.absolutedental.com/wp-content/uploads/2023/07/general-dentist-working.jpg",
+     "description": "Enhance your oral health with our General Dentistry services, offering preventive care, fillings, crowns, cleanings, and gum treatments. Trusted dental solutions ensure healthy teeth and gums, boosting confidence. Book now for professional, reliable, and comprehensive dental care",
     "sub": [
         { "name": "Disinfectant", "image": "https://tse1.mm.bing.net/th/id/OIP.vUJfnAMEKYWFB-3MfNBv7wHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
         { "name": "Disposables", "image": "https://tse1.mm.bing.net/th/id/OIP.4OdWKNby6RuqAs35j-KiXQHaF7?rs=1&pid=ImgDetMain&o=7&rm=3" },
@@ -67,6 +77,8 @@
   {
     "name": "Prosthodontic",
     "icon": "FaTeeth",
+    "image": "https://img.freepik.com/premium-photo/dentist-blog-image-prosthodontics-with-bright-natural-lighting_1077802-409386.jpg",
+    "description": "Prosthodontics refers to the dental speciality that focuses on designing, creating, and fitting artificial teeth and dental prostheses. Prosthodontic products, including crowns, bridges, dentures, and implants, restore function, aesthetics, and oral health, ensuring durable and comfortable solutions for patients",
     "sub": [
         { "name": "Alginate Powder", "image": "https://tse1.mm.bing.net/th/id/OIP.BQDqAp7GYecNSzQYxukWgAHaHa?pid=ImgDet&w=474&h=474&rs=1&o=7&rm=3" },
         { "name": "Bite Registration", "image": "https://tse1.mm.bing.net/th/id/OIP.fCQmjVt7El9iahncqSkiDwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" },
@@ -80,6 +92,8 @@
   {
     "name": "Implantology",
     "icon": "FaCapsules",
+    "image": "https://www.ivorydentistry.in/assets/img/services/dental-implants/dental-implants-section-1.webp",
+    "description": "Implantology in dentistry offers advanced solutions for missing teeth, providing durable, natural-looking dental implants. Explore high-quality implant kits, surgical tools, and accessories for precise procedures, ensuring long-lasting results. Perfect for dental professionals seeking reliable implantology products online.",
     "sub": [
         { "name": "Bone Grafts", "image": "https://tse2.mm.bing.net/th/id/OIP.hL3AqQPkNyvpw0M5Te3WhwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" },
         { "name": "Implant Equipment", "image": "https://th.bing.com/th/id/R.70cd664e806c355cde61f8a0cd5a6d31?rik=B2GIthE1eeywJQ&riu=http%3a%2f%2fdentalaccessories.org%2fcdn%2fshop%2fcollections%2fCollectionTitles-05.png%3fv%3d1724537559&ehk=1PMXA3pk1eV2vRYAcyoyagqOIoriu1px%2bkguyexJn%2f4%3d&risl=&pid=ImgRaw&r=0" },
@@ -91,6 +105,8 @@
   {
     "name": "Orthodontics",
     "icon": "FaGift",
+    "image": "https://tse1.explicit.bing.net/th/id/OIP.v6RvLl5TQfL1FnmfACpHnwHaHt?w=555&h=578&rs=1&pid=ImgDetMain&o=7&rm=3",
+    "description": "Orthodontics in dentistry focuses on correcting misaligned teeth and jaws, improving both function and aesthetics. Our orthodontic products ensure precise treatment, reliable results, and enhanced patient comfort. Explore braces, aligners, and accessories designed for effective dental care and long-lasting orthodontic solution",
     "sub": [
         { "name": "Adhesives", "image": "https://tse4.mm.bing.net/th/id/OIP.Mhce3piCP_JcUPeG98UYpwHaEj?rs=1&pid=ImgDetMain&o=7&rm=3" },
         { "name": "Brackets", "image": "https://tse4.mm.bing.net/th/id/OIP.YCbdnI2lFGh9ccJkaElTvAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" },
@@ -102,6 +118,8 @@
   {
     "name": "Pedodontic",
     "icon": "FaChild",
+    "image": "https://kidsdentalspecialists.com/wp-content/uploads/2022/07/why-see-a-pediatric-dentist-image.jpg",
+    "description": "Browse high quality Pedodontic dental equipment and supplies.",
     "sub": [
         { "name": "Crown Removers", "image": "https://m.media-amazon.com/images/I/81w5y3VgMOL.jpg" },
         { "name": "Temporary Crown Materials", "image": "https://tse1.mm.bing.net/th/id/OIP.aeTJXc-gq95_vIvFmLWfyAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" }
