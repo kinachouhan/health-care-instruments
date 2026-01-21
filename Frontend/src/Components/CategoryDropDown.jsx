@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaTools, FaGift, FaTooth, FaCogs, FaSyringe,
@@ -13,6 +13,8 @@ export const CategoryDropdown = () => {
   const [open, setOpen] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState("");
 
+  const dropdownRef = useRef(null);
+
   const iconMap = {
     FaTooth: <FaTooth />,
     FaCogs: <FaCogs />,
@@ -25,8 +27,26 @@ export const CategoryDropdown = () => {
     FaChild: <FaChild />,
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+
   return (
-    <div className="relative inline-block">
+    <div ref={dropdownRef}   className="relative inline-block">
       {/* Trigger */}
       <button
         onClick={() => setOpen((p) => !p)}
@@ -39,7 +59,7 @@ export const CategoryDropdown = () => {
 
       {open && (
         <div className="absolute top-full left-0 flex bg-white rounded-md p-2 shadow-lg z-50">
-          
+
           {/* LEFT: Categories */}
           <div className="flex flex-col">
             {categories.map((cat) => (

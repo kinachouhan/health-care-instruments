@@ -259,6 +259,7 @@ export const Products = () => {
                                 {paginatedProducts.map((p) => (
                                     <div
                                         key={p._id}
+                                         onClick={() => navigate(`/product/${p._id}`)}
                                         className="bg-white rounded-2xl shadow-md p-4 relative transform transition-transform duration-500 ease-in-out hover:scale-105"
                                     >
                                         <button className="absolute hover:text-red-500 top-4 right-4">

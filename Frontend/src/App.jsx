@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { Products } from './Pages/Products'
 import { Toaster } from "react-hot-toast";
+import { SinglePageProduct } from './Pages/SinglePageProduct'
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
         { path: "/cart", element: <Cart /> },
         { path: "/wishlist", element: <WishList /> },
         { path: "/products", element: <Products/> },
+        {path: "/product/:id" , element: <SinglePageProduct/> }
       ],
     },
     {

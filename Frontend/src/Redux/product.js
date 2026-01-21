@@ -7,7 +7,7 @@ const initialState = {
     loading: false,
     error: null,
     totalPages: 1,
-  currentPage: 1,
+    currentPage: 1,
 };
 
 
@@ -80,6 +80,17 @@ export const deleteProduct = createAsyncThunk(
 );
 
 
+export const getProductById = createAsyncThunk(
+    "product/getProductById",
+    async (id) => {
+        const res = await fetch(`${API}/api/v1/product/${id}`);
+       
+        const data = await res.json();
+
+        return data.responseData
+    }
+);
+
 
 const productSlice = createSlice({
     name: "product",
@@ -118,7 +129,14 @@ const productSlice = createSlice({
                 state.loading = false;
                 state.products = state.products.filter((p) => p._id !== action.payload._id);
             })
-            .addCase(deleteProduct.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+            .addCase(deleteProduct.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+            .addCase(getProductById.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getProductById.fulfilled, (state, action) => {
+                state.loading = false;
+                state.singleProduct = action.payload;
+            });
     },
 });
 

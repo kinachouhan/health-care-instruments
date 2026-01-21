@@ -139,3 +139,33 @@ export const deleteProduct = async (req, res) => {
         });
     }
 }
+
+
+export const getProduct = async (req, res) => {
+    try {
+        const {id} = req.params
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: "Product ID is required",
+            });
+        }
+
+        const product = await Product.findById(id)
+
+        return res.status(200).json({
+            success: true,
+            responseData: product
+        })
+
+
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch product",
+        });
+    }
+}
