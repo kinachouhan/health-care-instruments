@@ -67,34 +67,35 @@ export const addToCart = async (req, res) => {
 
 
 export const removeFromCart = async (req, res) => {
-    try {
-        const { productId } = req.body
+  try {
+    const { productId } = req.body;
 
-        const cart = await Cart.findOne({ user: req.user._id })
+    const cart = await Cart.findOne({ user: req.user._id }).populate("items.product");
 
-        if (!cart) {
-            return res.status(400).json({
-                success: false,
-                message: "product is not in cart"
-            })
-        }
-
-        cart.items = cart.items.filter(item => item.product.toString() !== productId)
-
-        await cart.save()
-
-        res.status(200).json({
-            success: true,
-            responseData: cart
-        })
+    if (!cart) {
+      return res.status(400).json({
+        success: false,
+        message: "Product is not in cart"
+      });
     }
-    catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
-    }
-}
+
+    cart.items = cart.items.filter(item => item.product._id.toString() !== productId);
+    await cart.save();
+
+    await cart.populate("items.product");
+
+    res.status(200).json({
+      success: true,
+      responseData: cart.items  
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
 
 export const clearCart = async (req, res) => {
     try {
