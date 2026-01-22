@@ -19,6 +19,7 @@ import { useEffect } from 'react'
 import { Products } from './Pages/Products'
 import { Toaster } from "react-hot-toast";
 import { SinglePageProduct } from './Pages/SinglePageProduct'
+import { Profile } from './Pages/Profile'
 
 function App() {
 
@@ -39,7 +40,8 @@ function App() {
         { path: "/cart", element: <Cart /> },
         { path: "/wishlist", element: <WishList /> },
         { path: "/products", element: <Products/> },
-        {path: "/product/:id" , element: <SinglePageProduct/> }
+        {path: "/product/:id" , element: <SinglePageProduct/> },
+        {path: "/profile" , element: <Profile/> }
       ],
     },
     {

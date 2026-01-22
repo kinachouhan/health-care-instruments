@@ -4,7 +4,7 @@ const API = import.meta.env.VITE_API_URL;
 
 const initialState = {
       user: null,
-       isAuthenticated: false,
+      isAuthenticated: false,
       loading: false,
       error: null,
 };
@@ -81,98 +81,122 @@ export const resendOtp = createAsyncThunk(
 );
 
 export const signup = createAsyncThunk(
-  "auth/signup",
-  async (formData, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${API}/api/v1/user/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // correct way to send cookies
-        body: JSON.stringify(formData),
-      });
+      "auth/signup",
+      async (formData, { rejectWithValue }) => {
+            try {
+                  const res = await fetch(`${API}/api/v1/user/signup`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include", // correct way to send cookies
+                        body: JSON.stringify(formData),
+                  });
 
-      const data = await res.json(); 
+                  const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        return rejectWithValue(data.message || "Signup failed");
+                  if (!res.ok || !data.success) {
+                        return rejectWithValue(data.message || "Signup failed");
+                  }
+
+                  return data.responseData
+            } catch (err) {
+                  return rejectWithValue(err.message);
+            }
       }
-     
-      return data.responseData
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
 );
+
+
+export const updateProfile = createAsyncThunk(
+      "auth/updateProfile",
+      async (data) => {
+            const res = await fetch(`${API}/api/v1/user/profile`, {
+                  method: "PUT",
+                  headers: {
+                        "Content-Type": "application/json"
+                  },
+                  credentials: "include", // IMPORTANT for cookies/JWT
+                  body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (!res.ok) {
+                  throw new Error(result.message || "Profile update failed");
+            }
+
+            return result;
+      }
+)
+
 
 export const getMe = createAsyncThunk(
       "auth/getMe",
-      async(_ , {rejectWithValue})=>{
-            try{
-               const res = await fetch(`${API}/api/v1/user/me`, {
-                    method: "GET",
-                    credentials: "include",
-               })
+      async (_, { rejectWithValue }) => {
+            try {
+                  const res = await fetch(`${API}/api/v1/user/me`, {
+                        method: "GET",
+                        credentials: "include",
+                  })
 
-               const data = await res.json()
+                  const data = await res.json()
 
-               if(!res.ok  || !data.success){
-                    return rejectWithValue(data.message || "Failed to get user")
-               }
+                  if (!res.ok || !data.success) {
+                        return rejectWithValue(data.message || "Failed to get user")
+                  }
 
-               return data.responseData
+                  return data.responseData
             }
-            catch(error){
-                   return rejectWithValue(error.message)
+            catch (error) {
+                  return rejectWithValue(error.message)
             }
       }
 )
 
 
 export const login = createAsyncThunk(
-  "auth/login",
-  async (formData, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${API}/api/v1/user/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // correct way to send cookies
-        body: JSON.stringify(formData),
-      });
+      "auth/login",
+      async (formData, { rejectWithValue }) => {
+            try {
+                  const res = await fetch(`${API}/api/v1/user/login`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include", // correct way to send cookies
+                        body: JSON.stringify(formData),
+                  });
 
-      const data = await res.json(); 
+                  const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        return rejectWithValue(data.message || "Login failed");
+                  if (!res.ok || !data.success) {
+                        return rejectWithValue(data.message || "Login failed");
+                  }
+
+                  return data.responseData
+            } catch (err) {
+                  return rejectWithValue(err.message);
+            }
       }
-     
-      return data.responseData
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
 );
 
 
 export const logout = createAsyncThunk(
-  "auth/logout",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${API}/api/v1/user/logout`, {
-        method: "POST",
-        credentials: "include", 
-      });
+      "auth/logout",
+      async (_, { rejectWithValue }) => {
+            try {
+                  const res = await fetch(`${API}/api/v1/user/logout`, {
+                        method: "POST",
+                        credentials: "include",
+                  });
 
-      const data = await res.json();
+                  const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        return rejectWithValue(data.message || "Logout failed");
+                  if (!res.ok || !data.success) {
+                        return rejectWithValue(data.message || "Logout failed");
+                  }
+
+                  return data;
+            } catch (error) {
+                  return rejectWithValue(error.message);
+            }
       }
-
-      return data; 
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
 );
 
 
@@ -250,26 +274,38 @@ const authSlice = createSlice({
                         state.error = action.payload;
                   })
                   .addCase(logout.fulfilled, (state) => {
-                         state.user = null;
-                          state.isAuthenticated = false; 
-                          state.loading = false; 
-                  }) 
-                  .addCase(logout.rejected, (state, action) => { 
-                        state.loading = false; 
-                        state.error = action.payload; 
+                        state.user = null;
+                        state.isAuthenticated = false;
+                        state.loading = false;
                   })
-                  .addCase(getMe.pending , (state, action)=>{
-                         state.loading = true
+                  .addCase(logout.rejected, (state, action) => {
+                        state.loading = false;
+                        state.error = action.payload;
                   })
-                  .addCase(getMe.fulfilled , (state,action)=>{
+                  .addCase(getMe.pending, (state, action) => {
+                        state.loading = true
+                  })
+                  .addCase(getMe.fulfilled, (state, action) => {
+                        state.loading = false;
+                        state.user = action.payload;
+                        state.isAuthenticated = true;
+                  })
+                  .addCase(getMe.rejected, (state, action) => {
                         state.loading = false,
-                        state.user = state.payload 
-                        state.isAuthenticated = true
+                              state.isAuthenticated = false
                   })
-                  .addCase(getMe.rejected , (state, action)=>{
-                          state.loading = false,
-                          state.isAuthenticated = false  
-                  })  
+                  .addCase(updateProfile.pending, (state) => {
+                        state.loading = true;
+                        state.error = null;
+                  })
+                  .addCase(updateProfile.fulfilled, (state, action) => {
+                        state.loading = false;
+                        state.user = action.payload.user
+                  })
+                  .addCase(updateProfile.rejected, (state, action) => {
+                        state.loading = false;
+                        state.error = action.payload;
+                  });
       }
 });
 

@@ -63,11 +63,11 @@ export const CategoryScrollbar = () => {
               }
               className={`w-53 flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm hover:shadow-md transition`}
             >
-              <div className="flex items-center justify-center">
+              <div className="flex flex-shrink-0 items-center justify-center">
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-25 h-16 rounded-full"
+                  className="w-16 h-16 rounded-full"
                 />
               </div>
               <span className="w-full font-medium">

@@ -20,7 +20,7 @@ export const CategorySection = ({ title, products }) => {
       </div>
 
       {/* PRODUCTS */}
-      <div className="flex gap-6  overflow-x-auto no-scrollbar  pb-2">
+      <div className="flex gap-6 flex-shrink-0 overflow-x-auto no-scrollbar  pb-2">
         {products.slice(0, 6).map((p) => (
           <div
             key={p._id}

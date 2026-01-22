@@ -98,7 +98,7 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "5d" })
 
-       return  res.status(200)
+        return res.status(200)
             .cookie("token", token, {
                 httpOnly: true,
                 secure: false,
@@ -234,7 +234,7 @@ export const logout = (req, res) => {
                 httpOnly: true,
                 secure: false,
                 sameSite: "lax",
-                expires: new Date(0) 
+                expires: new Date(0)
             })
             .json({
                 success: true,
@@ -248,18 +248,82 @@ export const logout = (req, res) => {
     }
 };
 
-export const getMe = async(req, res)=>{
-     try{
-         const userId = req.user._id
+export const getMe = async (req, res) => {
+    try {
+        const userId = req.user._id
 
-         const user = await User.findById(userId)
+        const user = await User.findById(userId).select("-password");
 
-         return res.status(200).json({
-             success: true,
-             responseData: user
-         })
-     }
-     catch(error){
-          res.status(500).json({ success: false, message: "Server error" });
-     }
+        return res.status(200).json({
+            success: true,
+            responseData: user
+        })
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: "Server error" });
+    }
 }
+
+
+
+
+export const updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    /* ================= BASIC FIELDS ================= */
+    if (req.body.name !== undefined) {
+      user.name = req.body.name;
+    }
+
+    if (req.body.phone !== undefined) {
+      user.phone = req.body.phone;
+    }
+
+    /* ================= ADDRESS (PARTIAL MERGE) ================= */
+    if (!user.address) {
+      user.address = {};
+    }
+
+    if (req.body.street !== undefined) {
+      user.address.street = req.body.street;
+    }
+
+    if (req.body.city !== undefined) {
+      user.address.city = req.body.city;
+    }
+
+    if (req.body.state !== undefined) {
+      user.address.state = req.body.state;
+    }
+
+    if (req.body.country !== undefined) {
+      user.address.country = req.body.country;
+    }
+
+    if (req.body.zipcode !== undefined) {
+      user.address.zipcode = req.body.zipcode;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: user.toObject({ versionKey: false })
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
