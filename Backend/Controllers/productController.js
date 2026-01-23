@@ -4,23 +4,13 @@ import cloudinary from "../cloudinary/cloudinary.js"
 
 export const addProduct = async (req, res) => {
   try {
-    
-    const { productName, price, description, category, subCategory } = req.body;
+    const { productName, description, price, category, subCategory, stock } = req.body;
 
-    // Validation
-    if (!productName || !price || !description || !category || !subCategory) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-    }
+    const stockNum = Number(stock);
+    if (isNaN(stockNum) || stockNum < 0)
+      return res.status(400).json({ success: false, message: "Invalid stock value" });
 
-    if (price <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Price must be greater than 0",
-      });
-    }
+   
 
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -29,9 +19,9 @@ export const addProduct = async (req, res) => {
       });
     }
 
-    // Upload images to Cloudinary
     const imageUrls = [];
     for (const file of req.files) {
+      if (!file || !file.buffer) continue; // 🔥 skip invalid
       const secureUrl = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "products" },
@@ -45,34 +35,31 @@ export const addProduct = async (req, res) => {
       imageUrls.push(secureUrl);
     }
 
-    // Save product
+
+    console.log("REQ.BODY:", req.body);
+    console.log("REQ.FILES:", req.files);
+
     const product = await Product.create({
       productName,
       description,
-      price,
+      price: Number(price),
       category,
       subCategory,
-      images: imageUrls, // ✅ use imageUrls
+      totalStock: stockNum,
+      availableStock: stockNum,
+      images: imageUrls,
     });
 
-    return res.status(201).json({
-      success: true,
-      message: "Product added successfully",
-      responseData: product,
-    });
+    res.status(201).json({ success: true, product });
   } catch (error) {
     console.error("Add Product Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 
 
-// backend controller
+
 export const getAllProducts = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -103,69 +90,129 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-
-
 export const deleteProduct = async (req, res) => {
-    try {
-        const { id } = req.params
+  try {
+    const { id } = req.params
 
-        if (!id) {
-            return res.status(400).json({
-                success: false,
-                message: "Product ID is required",
-            });
-        }
-
-        const product = await Product.findByIdAndDelete(id)
-
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "product not found"
-            })
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Product deleted successfully"
-        })
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required",
+      });
     }
-    catch (error) {
 
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to delete product",
-        });
+    const product = await Product.findByIdAndDelete(id)
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "product not found"
+      })
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully"
+    })
+  }
+  catch (error) {
+
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete product",
+    });
+  }
 }
-
 
 export const getProduct = async (req, res) => {
-    try {
-        const {id} = req.params
+  try {
+    const { id } = req.params
 
-        if (!id) {
-            return res.status(400).json({
-                success: false,
-                message: "Product ID is required",
-            });
-        }
-
-        const product = await Product.findById(id)
-
-        return res.status(200).json({
-            success: true,
-            responseData: product
-        })
-
-
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required",
+      });
     }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch product",
-        });
-    }
+
+    const product = await Product.findById(id)
+
+    return res.status(200).json({
+      success: true,
+      responseData: product
+    })
+
+
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch product",
+    });
+  }
 }
+
+
+
+
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      productName,
+      description,
+      price,
+      category,
+      subCategory,
+      stock,      
+      addStock,  
+    } = req.body;
+
+    if (!productName || !description || !price || !category || !subCategory) {
+      return res.status(400).json({ message: "All required fields must be provided" });
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    product.productName = productName;
+    product.description = description;
+    product.price = Number(price);
+    product.category = category;
+    product.subCategory = subCategory;
+
+    if (stock !== undefined) {
+    product.totalStock = Number(stock);
+      product.availableStock = Number(stock);
+    } else if (addStock) {
+      
+      product.totalStock += Number(addStock);
+      product.availableStock += Number(addStock);
+    }
+
+    
+    if (req.files && req.files.length > 0) {
+     
+      const imageUrls = [];
+      for (const file of req.files) {
+        const result = await cloudinary.uploader.upload(file.path, { folder: "products" });
+        imageUrls.push(result.secure_url);
+      }
+      product.images = imageUrls;
+    }
+
+    await product.save();
+
+    res.status(200).json({ message: "Product updated successfully", responseData: product });
+  } catch (error) {
+    console.error("Update Product Error:", error);
+    res.status(500).json({ message: error.message || "Something went wrong" });
+  }
+};
+
+
+
+

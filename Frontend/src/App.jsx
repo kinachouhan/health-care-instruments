@@ -51,6 +51,7 @@ function App() {
         { index: true, element: <AdminAddProduct /> }, 
         { path: "list", element: <AdminAllProductList /> }, 
         { path: "all-orders", element: <AdminAllOrders /> }, 
+        { path:"product/edit/:id",  element: <AdminAddProduct /> }
       ],
     },
     {

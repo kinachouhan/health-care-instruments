@@ -4,6 +4,8 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { addProduct } from "../Redux/product";
 import { useDispatch, useSelector } from "react-redux"
 import toast from "react-hot-toast"
+import { useParams, useNavigate } from "react-router-dom";
+import { getProductById, updateProduct } from "../Redux/product";
 
 export const AdminAddProduct = () => {
   const [images, setImages] = useState([null, null, null, null]);
@@ -13,12 +15,43 @@ export const AdminAddProduct = () => {
 
   const dispatch = useDispatch()
 
+  const navigate= useNavigate()
+
+  const { id } = useParams(); // 🔥 if id exists → edit mode
+  const isEditMode = Boolean(id);
+
+  const { singleProduct } = useSelector(state => state.product);
+
+  useEffect(() => {
+    if (isEditMode) {
+      dispatch(getProductById(id));
+    }
+  }, [id, isEditMode, dispatch]);
+
+  useEffect(() => {
+    if (singleProduct && isEditMode) {
+      setProductDetails({
+        productName: singleProduct.productName,
+        description: singleProduct.description,
+        price: singleProduct.price,
+        category: singleProduct.category,
+        subCategory: singleProduct.subCategory,
+        stock: "", // 🔥 empty (admin adds extra stock)
+      });
+
+      setPreviews(singleProduct.images || []);
+      setImages([null, null, null, null]); // images optional on edit
+    }
+  }, [singleProduct, isEditMode]);
+
+
   const [productDetails, setProductDetails] = useState({
     productName: "",
     description: "",
     price: "",
     category: "",
     subCategory: "",
+    stock: ""
   });
 
 
@@ -57,50 +90,60 @@ export const AdminAddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // validation
-    if (
-      !productDetails.productName.trim() ||
-      !productDetails.description.trim() ||
-      !productDetails.category ||
-      !productDetails.subCategory ||
-      !productDetails.price ||
-      images.every((img) => img === null)
-    ) {
-      toast.error("All fields are required, including at least one image.");
+    // Validation
+    if (!productDetails.productName || !productDetails.description ||
+      !productDetails.category || !productDetails.subCategory || !productDetails.price) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    // For new product, at least one image is required
+    if (!isEditMode && images.every((img) => img === null)) {
+      toast.error("Please upload at least one product image.");
       return;
     }
 
     const formData = new FormData();
     formData.append("productName", productDetails.productName);
     formData.append("description", productDetails.description);
-    formData.append("price", productDetails.price);
+    formData.append("price", Number(productDetails.price)); // ✅ convert to number
     formData.append("category", productDetails.category);
     formData.append("subCategory", productDetails.subCategory);
 
-    images.forEach((img) => img && formData.append("images", img));
+    // Stock only if filled
+    if (productDetails.stock) {
+      formData.append("stock", Number(productDetails.stock)); // ✅ convert to number
+    }
+
+    images.forEach((img) => {
+      if (img) formData.append("images", img);
+    });
 
     try {
-      
-      const result = await dispatch(addProduct(formData)).unwrap();
-      toast.success("Product added successfully!");
+      if (isEditMode) {
+        await dispatch(updateProduct({ id, formData })).unwrap();
+        toast.success("Product updated successfully!");
+      } else {
+        await dispatch(addProduct(formData)).unwrap();
+        toast.success("Product added successfully!");
+      }
 
-      setProductDetails({
+       setProductDetails({
         productName: "",
         description: "",
         price: "",
         category: "",
         subCategory: "",
+        stock: ""
       });
-      previews.forEach((url) => url && URL.revokeObjectURL(url));
       setImages([null, null, null, null]);
       setPreviews([null, null, null, null]);
-    } catch (error) {
+  
      
-      toast.error(error?.message || error || "Failed to add product");
+    } catch (error) {
+      toast.error(error?.message || "Something went wrong");
     }
   };
-
-
 
 
   return (
@@ -225,12 +268,31 @@ export const AdminAddProduct = () => {
             </div>
           </div>
 
+          <div className="w-full">
+            <label className="block font-medium mb-1">Stock Quantity</label>
+            <input
+              type="number"
+              name="stock"
+              min="0"
+              value={productDetails.stock}
+              onChange={handleChange}
+              placeholder="Enter available stock"
+              className="w-full border border-gray-200 rounded px-3 py-2"
+            />
+          </div>
+
 
           <div className="flex items-center justify-center">
-            <button type="submit"
+            <button
+              type="submit"
               disabled={loading}
-              className="bg-sky-600 text-white p-2 px-4 rounded hover:bg-sky-700 transition" >
-              {loading ? "Adding..." : "Add Product"}
+              className="bg-sky-600 text-white p-2 px-4 rounded"
+            >
+              {loading
+                ? "Saving..."
+                : isEditMode
+                  ? "Update Product"
+                  : "Add Product"}
             </button>
           </div>
         </div>

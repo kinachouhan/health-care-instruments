@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProduct, deleteProduct } from "../Redux/product";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const AdminAllProductList = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const limit = 10;
-
 
   const {
     products = [],
@@ -79,44 +79,60 @@ export const AdminAllProductList = () => {
               <th className="p-2 border">Category</th>
               <th className="p-2 border">Subcategory</th>
               <th className="p-2 border">Price</th>
+              <th className="p-2 border">In Stock</th>
               <th className="p-2 border">Image</th>
               <th className="p-2 border">Actions</th>
+              <th className="p-2 border">Edit</th>
             </tr>
           </thead>
 
           <tbody>
-            {products.map((product, index) => (
-              <tr key={product._id} className="hover:bg-gray-50">
-                <td className="p-2 border text-center">
-                  {(page - 1) * limit + index + 1}
-                </td>
-                <td className="p-2 border">{product.productName}</td>
-                <td className="p-2 border">{product.category}</td>
-                <td className="p-2 border">{product.subCategory}</td>
-                <td className="p-2 border">₹{product.price}</td>
+            {products.map((product, index) =>
+              product ? (
+                <tr key={product._id} className="hover:bg-gray-50">
+                  <td className="p-2 border text-center">
+                    {(page - 1) * limit + index + 1}
+                  </td>
+                  <td className="p-2 border">{product.productName}</td>
+                  <td className="p-2 border">{product.category}</td>
+                  <td className="p-2 border">{product.subCategory}</td>
+                  <td className="p-2 border">₹{product.price}</td>
+                  <td className="p-2 border text-center">
+                    {product?.availableStock > 0
+                      ? `${product.availableStock} in stock`
+                      : "Out of stock"}
+                  </td>
+                  <td className="p-2 border text-center">
+                    {product.images?.length > 0 ? (
+                      <img
+                        src={product.images[0]}
+                        alt={product.productName}
+                        className="w-14 h-14 object-cover rounded mx-auto"
+                      />
+                    ) : (
+                      <span className="text-gray-400 text-sm">No image</span>
+                    )}
+                  </td>
+                  <td className="p-2 border text-center">
+                    <button
+                      onClick={() => handleDelete(product._id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                  <td className="p-2 border text-center">
+                    <button
+                      onClick={() => navigate(`/admin/product/edit/${product._id}`)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+                    >
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              ) : null
+            )}
 
-                <td className="p-2 border text-center">
-                  {product.images?.length > 0 ? (
-                    <img
-                      src={product.images[0]}
-                      alt={product.productName}
-                      className="w-14 h-14 object-cover rounded mx-auto"
-                    />
-                  ) : (
-                    <span className="text-gray-400 text-sm">No image</span>
-                  )}
-                </td>
-
-                <td className="p-2 border text-center">
-                  <button
-                    onClick={() => handleDelete(product._id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
           </tbody>
         </table>
       </div>
@@ -136,8 +152,8 @@ export const AdminAllProductList = () => {
             key={i}
             onClick={() => setPage(i + 1)}
             className={`px-3 py-1 border rounded ${page === i + 1
-                ? "bg-sky-600 text-white"
-                : "bg-white hover:bg-gray-100"
+              ? "bg-sky-600 text-white"
+              : "bg-white hover:bg-gray-100"
               }`}
           >
             {i + 1}

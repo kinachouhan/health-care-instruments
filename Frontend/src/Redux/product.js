@@ -8,6 +8,7 @@ const initialState = {
     error: null,
     totalPages: 1,
     currentPage: 1,
+    singleProduct : null
 };
 
 
@@ -72,9 +73,9 @@ export const deleteProduct = createAsyncThunk(
                 return rejectWithValue(data.message || "Failed to delete product");
             }
 
-            return data // return deleted product info
+            return id; // 🔥 return id
         } catch (error) {
-            return rejectWithValue(error.message || "Network error");
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -84,10 +85,34 @@ export const getProductById = createAsyncThunk(
     "product/getProductById",
     async (id) => {
         const res = await fetch(`${API}/api/v1/product/${id}`);
-       
+
         const data = await res.json();
 
         return data.responseData
+    }
+);
+
+
+export const updateProduct = createAsyncThunk(
+    "product/updateProduct",
+    async ({ id, formData }, { rejectWithValue }) => {
+        try {
+            const res = await fetch(`${API}/api/v1/product/update/${id}`, {
+                method: "PUT",
+                credentials: "include",
+                body: formData,
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                return rejectWithValue(data.message || "Failed to update product");
+            }
+
+            return data.responseData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
     }
 );
 
@@ -127,7 +152,9 @@ const productSlice = createSlice({
             .addCase(deleteProduct.pending, (state) => { state.loading = true; state.error = null; })
             .addCase(deleteProduct.fulfilled, (state, action) => {
                 state.loading = false;
-                state.products = state.products.filter((p) => p._id !== action.payload._id);
+                state.products = state.products.filter(
+                    (p) => p._id !== action.payload
+                );
             })
             .addCase(deleteProduct.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
             .addCase(getProductById.pending, (state) => {
@@ -136,7 +163,26 @@ const productSlice = createSlice({
             .addCase(getProductById.fulfilled, (state, action) => {
                 state.loading = false;
                 state.singleProduct = action.payload;
-            });
+            })
+            .addCase(updateProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.loading = false;
+
+                state.products = state.products.map((p) =>
+                    p._id === action.payload._id ? action.payload : p
+                );
+
+                if (state.singleProduct?._id === action.payload._id) {
+                    state.singleProduct = action.payload;
+                }
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
     },
 });
 
