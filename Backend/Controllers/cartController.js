@@ -2,7 +2,7 @@ import { Cart } from "../Models/cartModule.js";
 
 export const getMyCart = async (req, res) => {
     try {
-        const cart = await Cart.findOne({ userID: req.user._id }).populate("items.product")
+        const cart = await Cart.findOne({ user: req.user._id }).populate("items.product")
 
         res.status(200).json({
             success: true,
@@ -53,7 +53,7 @@ export const addToCart = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            cart: populatedCart,
+             responseData: populatedCart.items,
         });
     }
     catch (error) {

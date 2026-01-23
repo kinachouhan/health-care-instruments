@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { FiHeart } from "react-icons/fi";
 import { getProductById } from "../Redux/product";
 import { addToCart, removeFromCart } from "../Redux/cartSlice";
-import { FaRegHeart, FaStar, FaTruck, FaShieldAlt, FaUndo } from "react-icons/fa";
+import { FaStar, FaTruck, FaShieldAlt, FaUndo } from "react-icons/fa";
+import { WishListHeart } from "../Components/WishListHeart";
+import { fetchWishList } from "../Redux/wishListSlice";
 
 export const SinglePageProduct = () => {
   const { id } = useParams();
@@ -23,6 +25,10 @@ export const SinglePageProduct = () => {
   useEffect(() => {
     dispatch(getProductById(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    dispatch(fetchWishList());
+  }, [dispatch]);
 
   useEffect(() => {
     if (product) setActiveTab("description");
@@ -81,9 +87,9 @@ export const SinglePageProduct = () => {
               alt={product.productName}
               className="w-full h-[420px] object-contain transition-transform duration-700 hover:scale-110"
             />
-            <button className="absolute top-5 right-5 bg-white p-3 rounded-full shadow">
-              <FaRegHeart />
-            </button>
+            <div className="absolute top-3 right-3">
+              <WishListHeart productId={product._id} />
+            </div>
           </div>
 
           {/* DETAILS */}
@@ -108,11 +114,10 @@ export const SinglePageProduct = () => {
               <button
                 onClick={handleCartClick}
                 disabled={cartLoading}
-                className={`px-4 py-2 w-full text-white rounded-lg font-semibold ${
-                  inCart
-                    ? "bg-gray-500 cursor-not-allowed hover:bg-gray-500"
-                    : "bg-red-500 hover:bg-white hover:border hover:border-red-500 hover:text-red-500"
-                }`}
+                className={`px-4 py-2 w-full text-white rounded-lg font-semibold ${inCart
+                  ? "bg-gray-500 cursor-not-allowed hover:bg-gray-500"
+                  : "bg-red-500 hover:bg-white hover:border hover:border-red-500 hover:text-red-500"
+                  }`}
               >
                 {cartLoading ? "Processing..." : inCart ? "Remove from Cart" : "Add to Cart"}
               </button>
@@ -132,22 +137,20 @@ export const SinglePageProduct = () => {
           <div className="flex border-b">
             <button
               onClick={() => setActiveTab("description")}
-              className={`px-8 py-4 font-semibold ${
-                activeTab === "description"
-                  ? "border-b-2 border-red-500 text-red-500"
-                  : "text-gray-500"
-              }`}
+              className={`px-8 py-4 font-semibold ${activeTab === "description"
+                ? "border-b-2 border-red-500 text-red-500"
+                : "text-gray-500"
+                }`}
             >
               Description
             </button>
 
             <button
               onClick={() => setActiveTab("reviews")}
-              className={`px-8 py-4 font-semibold ${
-                activeTab === "reviews"
-                  ? "border-b-2 border-red-500 text-red-500"
-                  : "text-gray-500"
-              }`}
+              className={`px-8 py-4 font-semibold ${activeTab === "reviews"
+                ? "border-b-2 border-red-500 text-red-500"
+                : "text-gray-500"
+                }`}
             >
               Reviews ({reviews.length})
             </button>
@@ -188,9 +191,8 @@ export const SinglePageProduct = () => {
                         {[1, 2, 3, 4, 5].map((star) => (
                           <FaStar
                             key={star}
-                            className={`text-sm ${
-                              star <= r.rating ? "text-yellow-400" : "text-gray-300"
-                            }`}
+                            className={`text-sm ${star <= r.rating ? "text-yellow-400" : "text-gray-300"
+                              }`}
                           />
                         ))}
                         <span className="font-semibold">{r.user.name}</span>
@@ -230,9 +232,12 @@ export const SinglePageProduct = () => {
                     onClick={() => navigate(`/product/${p._id}`)}
                     className="bg-white rounded-2xl shadow-md p-4 relative transform transition-transform duration-500 ease-in-out hover:scale-105"
                   >
-                    <button className="absolute hover:text-red-500 top-4 right-4">
-                      <FiHeart />
-                    </button>
+                    <div
+                      className="absolute top-4 right-4"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <WishListHeart productId={p._id} />
+                    </div>
 
                     <div className="h-40 flex items-center justify-center">
                       <img
@@ -255,11 +260,10 @@ export const SinglePageProduct = () => {
                         }
                       }}
                       disabled={cartLoading}
-                      className={`mt-3 w-full py-2 rounded-lg text-white font-semibold ${
-                        relatedInCart
-                          ? "bg-gray-500 cursor-not-allowed hover:bg-gray-500"
-                          : "bg-sky-600 hover:bg-red-500"
-                      }`}
+                      className={`mt-3 w-full py-2 rounded-lg text-white font-semibold ${relatedInCart
+                        ? "bg-gray-500 cursor-not-allowed hover:bg-gray-500"
+                        : "bg-sky-600 hover:bg-red-500"
+                        }`}
                     >
                       {relatedInCart ? "Remove from Cart" : "Add to Cart"}
                     </button>

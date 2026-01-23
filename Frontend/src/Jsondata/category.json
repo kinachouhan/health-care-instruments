@@ -124,5 +124,14 @@
         { "name": "Crown Removers", "image": "https://m.media-amazon.com/images/I/81w5y3VgMOL.jpg" },
         { "name": "Temporary Crown Materials", "image": "https://tse1.mm.bing.net/th/id/OIP.aeTJXc-gq95_vIvFmLWfyAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" }
      ]
+  },
+  {
+    "name": "Others",
+    "icon": "FaChild",
+    "image": "https://kidsdentalspecialists.com/wp-content/uploads/2022/07/why-see-a-pediatric-dentist-image.jpg",
+    "description": "Others",
+    "sub": [
+        { "name": "Others", "image": "https://m.media-amazon.com/images/I/81w5y3VgMOL.jpg" }
+     ]
   }
 ]

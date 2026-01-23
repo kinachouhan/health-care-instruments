@@ -50,7 +50,7 @@ export const Products = () => {
         ? subCategoryParam
         : categoryParam
             ? categoryParam
-            : "Shop";
+            : "All Products";
 
     const pageDescription = useMemo(() => {
         if (subCategoryParam) {

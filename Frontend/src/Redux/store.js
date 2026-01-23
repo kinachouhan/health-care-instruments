@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit"
 import userReducer from "./auth.js"
 import productReducer from "./product.js"
 import cartReducer from "./cartSlice.js"
+import wishListReducer from "./wishListSlice.js"
 import {
     persistStore,
     persistReducer,
@@ -41,7 +42,9 @@ export const store = configureStore({
     reducer: {
         user: userReducer,
         product: productReducer,
-        cart: persistedCartReducer   // ✅ persisted reducer
+        cart: persistedCartReducer ,
+        wishList : wishListReducer 
+         
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

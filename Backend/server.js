@@ -7,6 +7,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import productRoute from "./Routes/productRoute.js"
 import cartRoute from "./Routes/cartRoute.js"
+import wishListRoute from "./Routes/wishlistRoute.js"
 
 
 
@@ -26,6 +27,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use("/api/v1/user" , userRoute)
 app.use("/api/v1/product", productRoute)
 app.use("/api/v1/cart", cartRoute)
+app.use("/api/v1/wishlist", wishListRoute)
 
 
 

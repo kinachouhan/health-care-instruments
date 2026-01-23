@@ -7,24 +7,26 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../Redux/auth";
 import { useState, useEffect } from "react";
 import { fetchCart } from "../Redux/cartSlice";
+import { fetchWishList } from "../Redux/wishListSlice";
 
 export const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { isAuthenticated } = useSelector((state) => state.user);
-  const { items, hydrated } = useSelector((state) => state.cart);
+  const { items } = useSelector((state) => state.cart);
+  const { items: wishItems } = useSelector((state) => state.wishList);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  /* ===========================
-     Fetch cart ONLY ONCE
-  =========================== */
   useEffect(() => {
-    if (isAuthenticated && !hydrated) {
-      dispatch(fetchCart());
-    }
-  }, [dispatch, isAuthenticated, hydrated]);
+    dispatch(fetchWishList());
+  }, [dispatch,]);
+
+
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
 
   const handleLogout = async () => {
     await dispatch(logout());
@@ -32,21 +34,19 @@ export const Header = () => {
     navigate("/login");
   };
 
-  /* ===========================
-     Cart Count
-  =========================== */
- const safeItems = Array.isArray(items) ? items : [];
 
-const cartCount = safeItems.reduce(
-  (total, item) => total + (item.quantity || 0),
-  0
-);
+  const safeItems = Array.isArray(items) ? items : [];
+
+  const cartCount = safeItems.reduce(
+    (total, item) => total + (item.quantity || 0),
+    0
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between gap-6">
-          
+
           {/* Logo */}
           <div className="flex-shrink-0">
             <div onClick={() => navigate("/")} className="w-32 md:w-40 cursor-pointer">
@@ -68,7 +68,7 @@ const cartCount = safeItems.reduce(
 
           {/* Icons */}
           <div className="flex items-center gap-3">
-            
+
             {/* Profile */}
             <button
               onClick={() =>
@@ -86,7 +86,7 @@ const cartCount = safeItems.reduce(
             >
               <FaRegHeart className="text-2xl text-gray-700" />
               <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white ring-2 ring-white">
-                0
+                {wishItems.length}
               </span>
             </button>
 
