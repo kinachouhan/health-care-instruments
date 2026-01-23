@@ -21,6 +21,8 @@ export const Products = () => {
     const categoryParam = searchParams.get("category");
     const subCategoryParam = searchParams.get("subcategory");
 
+    const searchQuery = searchParams.get("search") || "";
+
     const ITEMS_PER_PAGE = 20;
 
     /* ================= FETCH PRODUCTS ================= */
@@ -104,9 +106,21 @@ export const Products = () => {
 
             const priceOk = p.price <= price;
 
-            return catOk && subOk && priceOk;
+            const searchOk =
+                !searchQuery ||
+                p.productName.toLowerCase().includes(searchQuery.toLowerCase());
+
+            return catOk && subOk && priceOk && searchOk;
         });
-    }, [products, selectedCategories, selectedSubCategories, price]);
+    }, [
+        products,
+        selectedCategories,
+        selectedSubCategories,
+        price,
+        searchQuery,
+    ]);
+
+
 
     /* ================= PAGINATION ================= */
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -259,7 +273,7 @@ export const Products = () => {
                                 {paginatedProducts.map((p) => (
                                     <div
                                         key={p._id}
-                                         onClick={() => navigate(`/product/${p._id}`)}
+                                        onClick={() => navigate(`/product/${p._id}`)}
                                         className="bg-white  rounded-2xl shadow-md p-4 relative transform transition-transform duration-500 ease-in-out hover:scale-105"
                                     >
                                         <button className="absolute hover:text-red-500 top-4 right-4">
@@ -311,8 +325,8 @@ export const Products = () => {
                                             key={pNum}
                                             onClick={() => setPage(pNum)}
                                             className={`px-4 py-2 rounded ${page === pNum
-                                                    ? "bg-sky-600 text-white"
-                                                    : "bg-gray-200"
+                                                ? "bg-sky-600 text-white"
+                                                : "bg-gray-200"
                                                 }`}
                                         >
                                             {pNum}

@@ -8,6 +8,7 @@ import { logout } from "../Redux/auth";
 import { useState, useEffect } from "react";
 import { fetchCart } from "../Redux/cartSlice";
 import { fetchWishList } from "../Redux/wishListSlice";
+import { useSearchParams } from "react-router-dom";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -18,6 +19,26 @@ export const Header = () => {
   const { items: wishItems } = useSelector((state) => state.wishList);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter" && searchText.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchText)}`);
+    }
+  };
+
+
+  const submitSearch = () => {
+    if (!searchText.trim()) return;
+    navigate(`/products?search=${encodeURIComponent(searchText)}`);
+  };
+
+  const [params] = useSearchParams();
+
+  useEffect(() => {
+    const q = params.get("search");
+    if (q) setSearchText(q);
+  }, [params]);
 
   useEffect(() => {
     dispatch(fetchWishList());
@@ -57,9 +78,20 @@ export const Header = () => {
           {/* Search (Desktop) */}
           <div className="hidden md:flex flex-1 justify-center">
             <div className="relative w-full max-w-lg">
-              <CiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+              <CiSearch onClick={submitSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
               <input
                 type="text"
+                value={searchText}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchText(value);
+
+
+                  if (value.trim() === "") {
+                    navigate("/products");
+                  }
+                }}
+                onKeyDown={(e) => e.key === "Enter" && submitSearch()}
                 placeholder="Search dental products..."
                 className="w-full rounded-full border border-gray-300 py-3 pl-12 pr-20 text-sm shadow-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
               />
@@ -111,9 +143,21 @@ export const Header = () => {
             <CiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
             <input
               type="text"
+              value={searchText}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchText(value);
+
+
+                if (value.trim() === "") {
+                  navigate("/products");
+                }
+              }}
+              onKeyDown={handleSearch}
               placeholder="Search dental products..."
               className="w-full rounded-full border border-gray-300 py-2 pl-10 pr-4 text-sm shadow-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
             />
+
           </div>
         </div>
       </div>
