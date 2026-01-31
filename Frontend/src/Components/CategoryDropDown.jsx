@@ -4,6 +4,7 @@ import {
   FaTools, FaGift, FaTooth, FaCogs, FaSyringe,
   FaSmile, FaTeeth, FaCapsules, FaChild
 } from "react-icons/fa";
+import { TbPhysotherapist } from "react-icons/tb";
 import { MdKeyboardArrowRight, MdOutlineCategory } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import categories from "../Jsondata/category.json";
@@ -25,6 +26,7 @@ export const CategoryDropdown = () => {
     FaCapsules: <FaCapsules />,
     FaGift: <FaGift />,
     FaChild: <FaChild />,
+    TbPhysotherapist: <TbPhysotherapist />,
   };
 
   useEffect(() => {
@@ -83,7 +85,7 @@ export const CategoryDropdown = () => {
             ))}
           </div>
 
-          {/* RIGHT: Subcategories */}
+    
           <div className="w-[800px]">
             <div className="flex items-center px-8 py-4 gap-2">
               <h3 className="text-2xl font-semibold text-sky-600">

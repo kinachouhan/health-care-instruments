@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProduct } from "../Redux/product";
-import { FiHeart, FiSearch, FiChevronDown } from "react-icons/fi";
+import { FiHeart, FiChevronDown } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import categoryData from "../Jsondata/category.json";
@@ -24,127 +24,90 @@ export const Products = () => {
 
   const ITEMS_PER_PAGE = 20;
 
-  // Fetch products
+  const getPrices = (price) => {
+    if (typeof price === "number") {
+      return { selling: price, original: price };
+    }
+    if (typeof price === "object" && price !== null) {
+      return {
+        selling: price.selling ?? price.original ?? 0,
+        original: price.original ?? price.selling ?? 0,
+      };
+    }
+    return { selling: 0, original: 0 };
+  };
+
+
   useEffect(() => {
     dispatch(getAllProduct({ page: 1, limit: 500 }));
   }, [dispatch]);
 
-  // URL → state
+ 
   useEffect(() => {
     setSelectedCategories(categoryParam ? [categoryParam] : []);
     setSelectedSubCategories(subCategoryParam ? [subCategoryParam] : []);
     setPage(1);
   }, [categoryParam, subCategoryParam]);
 
-  // Price range
-  const prices = products.map((p) => p.price);
+  const prices = products.map((p) => getPrices(p.price).selling);
   const minPrice = Math.min(...prices, 0);
   const maxPrice = Math.max(...prices, 0);
+
   const [price, setPrice] = useState(maxPrice);
   useEffect(() => setPrice(maxPrice), [maxPrice]);
 
-  // Page title & description
-  const pageTitle = subCategoryParam || categoryParam || "All Products";
-  const pageDescription = useMemo(() => {
-    if (subCategoryParam) {
-      const parentCategory = categoryData.find(c =>
-        c.sub?.some(s => s.name === subCategoryParam)
-      );
-      const subData = parentCategory?.sub?.find(s => s.name === subCategoryParam);
-      return subData?.description || `Explore premium ${subCategoryParam} dental products.`;
-    } else if (categoryParam) {
-      const catData = categoryData.find(c => c.name === categoryParam);
-      return catData?.description || `Browse high quality ${categoryParam} dental equipment and supplies.`;
-    }
-    return "";
-  }, [categoryParam, subCategoryParam]);
-
-  // Category data
-  const categories = useMemo(() => {
-    const map = {};
-    products.forEach((p) => {
-      if (!map[p.category]) map[p.category] = new Set();
-      map[p.category].add(p.subCategory);
-    });
-
-    return Object.keys(map).map((catName) => {
-      const data = categoryData.find((c) => c.name === catName);
-      return {
-        name: catName,
-        image: data?.image || "",
-        icon: data?.icon || "",
-        subcategories: [...map[catName]],
-        count: products.filter((p) => p.category === catName).length,
-      };
-    });
-  }, [products]);
-
-  // Filter products
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      const catOk = selectedCategories.length === 0 || selectedCategories.includes(p.category);
-      const subOk = selectedSubCategories.length === 0 || selectedSubCategories.includes(p.subCategory);
-      const priceOk = p.price <= price;
-      const searchOk = !searchQuery || p.productName.toLowerCase().includes(searchQuery.toLowerCase());
+      const { selling } = getPrices(p.price);
+
+      const catOk =
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(p.category);
+
+      const subOk =
+        selectedSubCategories.length === 0 ||
+        selectedSubCategories.includes(p.subCategory);
+
+      const priceOk = selling <= price;
+
+      const searchOk =
+        !searchQuery ||
+        p.productName.toLowerCase().includes(searchQuery.toLowerCase());
+
       return catOk && subOk && priceOk && searchOk;
     });
   }, [products, selectedCategories, selectedSubCategories, price, searchQuery]);
 
-  // Pagination
+
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+
   const paginatedProducts = filteredProducts.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
 
-  // Handlers
-  const toggleCategory = (cat) => {
-    setSelectedCategories(prev =>
-      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
-    );
-    setPage(1);
-  };
-
-  const toggleSubCategory = (sub) => {
-    setSelectedSubCategories(prev =>
-      prev.includes(sub) ? prev.filter(s => s !== sub) : [...prev, sub]
-    );
-    setPage(1);
-  };
-
-  const clearFilters = () => {
-    setSelectedCategories([]);
-    setSelectedSubCategories([]);
-    setPrice(maxPrice);
-    navigate("/products");
-  };
-
   return (
     <div className="bg-[#faf7f3] min-h-screen">
       <div className="max-w-[1400px] mx-auto px-4 py-8">
-        {/* HEADER */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 items-center mb-4">
-          <h1 className="text-4xl font-bold">{pageTitle}</h1>
-          <p className="text-gray-600 mt-4">{pageDescription}</p>
+
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-4">
+          <h1 className="text-4xl font-bold">
+            {subCategoryParam || categoryParam || "All Products"}
+          </h1>
         </div>
 
-        {/* CATEGORY SCROLL */}
-        <div className="py-2">
-          <CategoryScrollbar />
-        </div>
+        <CategoryScrollbar />
 
-        {/* TOOLBAR */}
         <div className="flex justify-end items-center my-6">
           <p className="text-sm text-gray-600">
             Showing {(page - 1) * ITEMS_PER_PAGE + 1}–
-            {Math.min(page * ITEMS_PER_PAGE, filteredProducts.length)} of {filteredProducts.length} results
+            {Math.min(page * ITEMS_PER_PAGE, filteredProducts.length)} of{" "}
+            {filteredProducts.length} results
           </p>
         </div>
 
-        {/* MAIN GRID */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
-          {/* FILTER SIDEBAR */}
           <aside className="md:col-span-1 bg-white rounded-2xl shadow-md p-6 h-fit sticky top-32">
             <h3 className="font-semibold mb-4">Filter By Price</h3>
             <input
@@ -158,111 +121,118 @@ export const Products = () => {
             <p className="text-sm mt-2">₹{minPrice} – ₹{price}</p>
 
             <h3 className="font-semibold mt-8 mb-3">Filter By Category</h3>
-            <div className="relative mb-4">
-              <input
-                placeholder="Find a Category"
-                className="w-full border px-4 py-2 rounded-lg"
-              />
-              <FiSearch className="absolute right-4 top-3 text-gray-400" />
-            </div>
 
-            {categories.map((cat) => (
+            {categoryData.map((cat) => (
               <div key={cat.name} className="mb-3">
                 <div
                   className="flex justify-between items-center cursor-pointer"
-                  onClick={() => setOpenCategory(openCategory === cat.name ? null : cat.name)}
+                  onClick={() =>
+                    setOpenCategory(openCategory === cat.name ? null : cat.name)
+                  }
                 >
                   <label className="flex gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={selectedCategories.includes(cat.name)}
-                      onChange={() => toggleCategory(cat.name)}
+                      onChange={() =>
+                        setSelectedCategories((prev) =>
+                          prev.includes(cat.name)
+                            ? prev.filter((c) => c !== cat.name)
+                            : [...prev, cat.name]
+                        )
+                      }
                     />
                     {cat.name}
                   </label>
                   <FiChevronDown />
                 </div>
 
-                {openCategory === cat.name && selectedCategories.includes(cat.name) && (
-                  <div className="ml-6 mt-2 space-y-2">
-                    {cat.subcategories.map((subName) => {
-                      const subData = categoryData.find(c => c.name === cat.name)?.sub.find(s => s.name === subName);
-                      return (
-                        <label key={subName} className="flex gap-2 items-center text-sm">
+                {openCategory === cat.name &&
+                  selectedCategories.includes(cat.name) && (
+                    <div className="ml-6 mt-2 space-y-2">
+                      {cat.sub?.map((sub) => (
+                        <label key={sub.name} className="flex gap-2 text-sm">
                           <input
                             type="checkbox"
-                            checked={selectedSubCategories.includes(subName)}
-                            onChange={() => toggleSubCategory(subName)}
+                            checked={selectedSubCategories.includes(sub.name)}
+                            onChange={() =>
+                              setSelectedSubCategories((prev) =>
+                                prev.includes(sub.name)
+                                  ? prev.filter((s) => s !== sub.name)
+                                  : [...prev, sub.name]
+                              )
+                            }
                           />
-                          {subData?.image && (
-                            <img
-                              src={subData.image}
-                              alt={subName}
-                              className="w-6 h-6 object-contain rounded"
-                            />
-                          )}
-                          <span>{subName}</span>
+                          {sub.name}
                         </label>
-                      );
-                    })}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  )}
               </div>
             ))}
-
-            <button
-              onClick={clearFilters}
-              className="w-full mt-6 bg-sky-600 text-white py-2 rounded-lg"
-            >
-              Clear Filters
-            </button>
           </aside>
 
-          {/* PRODUCTS */}
           <section className="md:col-span-3">
             {loading ? (
               <p>Loading...</p>
+            ) : paginatedProducts.length === 0 ? (
+              <div className="bg-white h-screen justify-center flex items-center flex-col rounded-2xl shadow-md p-10 text-center">
+                <h2 className="text-xl font-semibold text-gray-700">
+                  No products available
+                </h2>
+                <p className="text-sm text-gray-500 mt-2">
+                  Try selecting a different category or adjusting filters
+                </p>
+              </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {paginatedProducts.map((p) => {
-                  const inStock = p.availableStock > 0; // 🔹 check stock
+                  const inStock = p.availableStock > 0;
+                  const { selling, original } = getPrices(p.price);
+
                   return (
                     <div
                       key={p._id}
                       onClick={() => navigate(`/product/${p._id}`)}
-                      className="bg-white rounded-2xl shadow-md p-4 relative transform transition-transform duration-500 ease-in-out hover:scale-105"
+                      className="bg-white rounded-2xl shadow-md p-4 relative hover:scale-105 transition cursor-pointer"
                     >
-                      <button className="absolute hover:text-red-500 top-4 right-4">
+                      <button className="absolute top-4 right-4">
                         <FiHeart />
                       </button>
 
                       <div className="h-40 flex items-center justify-center">
                         <img
                           src={p.images?.[0]}
-                          className="h-full object-contain transform transition-transform duration-500 ease-in-out hover:scale-90"
                           alt={p.productName}
+                          className="h-full object-contain"
                         />
                       </div>
 
-                      <h3 className="text-sm font-medium mt-3 line-clamp-2">{p.productName}</h3>
+                      <h3 className="text-sm font-medium mt-3 line-clamp-2">
+                        {p.productName}
+                      </h3>
+
                       <div className="flex items-center gap-1 text-sm mt-1">
                         <FaStar className="text-yellow-400" /> 5 (2)
                       </div>
 
-                      <p className="text-red-500 font-semibold mt-2">₹{p.price}</p>
-
-                      {/* 🔹 Out of Stock */}
-                      {!inStock && (
-                        <p className="text-white bg-red-500 text-xs font-semibold mt-1 px-2 py-1 rounded inline-block">
-                          Out of Stock
-                        </p>
-                      )}
+                      <div className="mt-1">
+                        <span className="text-red-500 font-semibold">
+                          ₹{selling}
+                        </span>
+                        {original > selling && (
+                          <span className="line-through text-gray-400 text-sm ml-2">
+                            ₹{original}
+                          </span>
+                        )}
+                      </div>
 
                       <button
-                        className={`mt-3 w-full py-2 rounded-lg text-white ${
-                          inStock ? "bg-sky-600 hover:bg-red-500" : "bg-gray-400 cursor-not-allowed"
-                        }`}
                         disabled={!inStock}
+                        className={`mt-3 w-full py-2 rounded-lg text-white ${inStock
+                            ? "bg-sky-600 hover:bg-red-500"
+                            : "bg-gray-400 cursor-not-allowed"
+                          }`}
                       >
                         Add to Cart
                       </button>
@@ -272,9 +242,9 @@ export const Products = () => {
               </div>
             )}
 
-            {/* PAGINATION */}
+         
             {totalPages > 1 && (
-              <div className="flex justify-center mt-8 gap-2">
+              <div className="flex justify-center mt-10 gap-2">
                 <button
                   onClick={() => setPage((p) => Math.max(p - 1, 1))}
                   disabled={page === 1}
@@ -287,7 +257,10 @@ export const Products = () => {
                   <button
                     key={pNum}
                     onClick={() => setPage(pNum)}
-                    className={`px-4 py-2 rounded ${page === pNum ? "bg-sky-600 text-white" : "bg-gray-200"}`}
+                    className={`px-4 py-2 rounded ${page === pNum
+                        ? "bg-sky-600 text-white"
+                        : "bg-gray-200"
+                      }`}
                   >
                     {pNum}
                   </button>

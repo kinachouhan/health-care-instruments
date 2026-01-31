@@ -12,23 +12,17 @@ export const Navbar = () => {
   return (
     <nav className="sticky top-18 w-full bg-white shadow-md z-10">
       <div className="max-w-7xl mx-auto flex justify-around items-center text-sm font-medium h-14">
-        
-        {/* CATEGORY DROPDOWN */}
         <div className="flex items-center">
           <CategoryDropdown />
         </div>
 
-        {/* ALL PRODUCTS */}
         <NavLink to="/products" className={linkClass}>
           All Products
         </NavLink>
 
-        {/* ABOUT */}
         <NavLink to="/about" className={linkClass}>
           About Us
         </NavLink>
-
-        {/* CONTACT */}
         <NavLink to="/contact" className={linkClass}>
           Contact Us
         </NavLink>

@@ -13,17 +13,16 @@ export const CategoryScrollbar = () => {
   const navigate = useNavigate();
   const swiperRef = useRef();
 
-  // Prepare array: first categories, then subcategories
   const allItems = [
-    ...categoryData.map((c) => ({ ...c, isSub: false })), // main categories
+    ...categoryData.map((c) => ({ ...c, isSub: false })), 
     ...categoryData.flatMap((c) =>
       c.sub.map((s) => ({ ...s, parent: c.name, isSub: true }))
-    ), // all subcategories
+    ),
   ];
 
   return (
     <div className="relative group">
-      {/* Left Arrow */}
+   
       <button
         onClick={() => swiperRef.current?.slidePrev()}
         className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition"
@@ -31,7 +30,6 @@ export const CategoryScrollbar = () => {
         &#8592;
       </button>
 
-      {/* Right Arrow */}
       <button
         onClick={() => swiperRef.current?.slideNext()}
         className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition"
@@ -44,7 +42,7 @@ export const CategoryScrollbar = () => {
         modules={[Navigation]}
         spaceBetween={16}
         slidesPerView="auto"
-        loop={true} // infinite loop
+        loop={true} 
         className="py-4"
       >
         {allItems.map((item, idx) => (

@@ -127,11 +127,11 @@
   },
   {
     "name": "Others",
-    "icon": "FaChild",
-    "image": "https://kidsdentalspecialists.com/wp-content/uploads/2022/07/why-see-a-pediatric-dentist-image.jpg",
+    "icon": "TbPhysotherapist",
+    "image": "https://www.caribbeannationalweekly.com/wp-content/uploads/2019/09/teeth-cleaning-dental.jpg",
     "description": "Others",
     "sub": [
-        { "name": "Others", "image": "https://m.media-amazon.com/images/I/81w5y3VgMOL.jpg" }
+        { "name": "Others", "image": "https://www.provetccg.com.au/wp-content/uploads/shop_images/Dental-Hand-Instruments-Care-and-Sharpening.jpg" }
      ]
   }
 ]

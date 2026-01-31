@@ -7,7 +7,7 @@ const initialState = {
   error: null,
 };
 
-// FETCH CART
+
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
   async (_, { rejectWithValue }) => {
@@ -24,7 +24,7 @@ export const fetchCart = createAsyncThunk(
   }
 );
 
-// ADD / INCREASE / DECREASE
+
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async ({ productId, quantity = 1 }, { rejectWithValue }) => {
@@ -66,20 +66,27 @@ export const removeFromCart = createAsyncThunk(
   }
 );
 
-// CLEAR CART
 export const clearCart = createAsyncThunk(
   "cart/clearCart",
   async (_, { rejectWithValue }) => {
     try {
       const res = await fetch(`${API}/api/v1/cart/clear`, {
         method: "DELETE",
-        credentials: "include",
+        credentials: "include", 
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+
       const data = await res.json();
-      if (!data.success) return rejectWithValue(data.message);
-      return []; // empty cart
+
+      if (!res.ok || !data.success) {
+        return rejectWithValue(data.message || "Failed to clear cart");
+      }
+
+      return [];
     } catch (err) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.message || "Something went wrong");
     }
   }
 );
@@ -90,7 +97,7 @@ const cartSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // FETCH
+   
       .addCase(fetchCart.pending, (state) => {
         state.cartLoading = true;
       })
@@ -102,7 +109,7 @@ const cartSlice = createSlice({
         state.cartLoading = false;
       })
 
-      // ADD
+   
       .addCase(addToCart.pending, (state) => {
         state.cartLoading = true;
       })
@@ -114,7 +121,6 @@ const cartSlice = createSlice({
         state.cartLoading = false;
       })
 
-      // REMOVE
       .addCase(removeFromCart.pending, (state) => {
         state.cartLoading = true;
       })
@@ -126,7 +132,6 @@ const cartSlice = createSlice({
         state.cartLoading = false;
       })
 
-      // CLEAR
       .addCase(clearCart.pending, (state) => {
         state.cartLoading = true;
       })

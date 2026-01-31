@@ -19,8 +19,6 @@ export const WishList = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 pb-40">
-      
-      {/* HEADER */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
           My Wishlist ❤️
@@ -36,17 +34,24 @@ export const WishList = () => {
         </button>
       </div>
 
-      {/* PRODUCTS GRID */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 pt-8 gap-6">
         {items.map((item) => {
           const product = item.product;
+
+          const sellingPrice = product.price?.selling || product.price || 0;
+          const originalPrice = product.price?.original || sellingPrice;
+
+          const hasDiscount = originalPrice > sellingPrice;
+          const discountPercentage = hasDiscount
+            ? Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)
+            : 0;
 
           return (
             <div
               key={product._id}
               className="relative bg-white rounded-xl shadow hover:shadow-xl transition group"
             >
-              {/* REMOVE SINGLE */}
+       
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -57,7 +62,7 @@ export const WishList = () => {
                 <FaTrashAlt className="text-sm" />
               </button>
 
-              {/* CARD CLICK */}
+          
               <div
                 onClick={() => navigate(`/product/${product._id}`)}
                 className="cursor-pointer p-4 py-8"
@@ -74,9 +79,17 @@ export const WishList = () => {
                   {product.productName}
                 </h3>
 
-                <p className="text-red-500 font-semibold mt-2">
-                  ₹{product.price}
-                </p>
+                <div className="flex items-center gap-2 mt-2 text-sm">
+                  {hasDiscount && (
+                    <span className="line-through text-gray-400">
+                      ₹{originalPrice}
+                    </span>
+                  )}
+                  <span className="text-red-500 font-semibold">₹{sellingPrice}</span>
+                  {hasDiscount && (
+                    <span className="text-green-600 font-medium">{discountPercentage}% off</span>
+                  )}
+                </div>
               </div>
             </div>
           );

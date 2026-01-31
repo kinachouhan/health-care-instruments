@@ -1,18 +1,32 @@
-
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FiHeart } from "react-icons/fi";
 
+
+const getPrices = (price) => {
+  if (typeof price === "number") {
+    return { selling: price, original: price };
+  }
+
+  if (typeof price === "object" && price !== null) {
+    return {
+      selling: price.selling ?? price.original ?? 0,
+      original: price.original ?? price.selling ?? 0,
+    };
+  }
+
+  return { selling: 0, original: 0 };
+};
+
 export const NewArrival = ({ limit = 6 }) => {
   const { products = [], loading } = useSelector((state) => state.product);
   const navigate = useNavigate();
-   
+
 
   const sortedProducts = [...products].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
-  
   const newArrivals = sortedProducts.slice(0, limit);
 
   if (loading) return <p>Loading...</p>;
@@ -23,48 +37,63 @@ export const NewArrival = ({ limit = 6 }) => {
         <h2 className="text-2xl font-bold">New Arrivals</h2>
         <button
           onClick={() => navigate("/products")}
-          className="bg-orange-500 text-white px-3 py-1 rounded cursor-pointer "
+          className="bg-orange-500 text-white px-3 py-1 rounded cursor-pointer"
         >
           VIEW ALL
         </button>
       </div>
 
       <div className="flex space-x-4 overflow-x-auto scrollbar-hide py-2">
-        {newArrivals.map((p) => (
-          <div
-            key={p._id}
-            className="flex-shrink-0 w-48 bg-white shadow-md p-5 relative cursor-pointer transform transition-transform duration-500 ease-in-out hover:scale-105"
-            onClick={() => navigate(`/product/${p._id}`)}
-          >
+        {newArrivals.map((p) => {
+          const { selling, original } = getPrices(p.price);
 
-            <button className="absolute top-3 right-3 hover:text-red-500">
-              <FiHeart />
-            </button>
+          const discount =
+            original > selling
+              ? Math.round(((original - selling) / original) * 100)
+              : 0;
 
-            <div className="h-40 flex items-center justify-center">
-              <img
-                src={p.images?.[0]}
-                alt={p.productName}
-                className="h-full object-contain"
-              />
-            </div>
-            <h3 className="text-sm font-medium mt-2 line-clamp-2">
-              {p.productName}
-            </h3>
+          return (
+            <div
+              key={p._id}
+              className="flex-shrink-0 w-48 bg-white shadow-md p-5 relative cursor-pointer transform transition-transform duration-500 ease-in-out hover:scale-105"
+              onClick={() => navigate(`/product/${p._id}`)}
+            >
+              <button className="absolute top-3 right-3 hover:text-red-500">
+                <FiHeart />
+              </button>
 
-            <div className="flex items-center gap-2 mt-1 text-sm">
-              <span className="line-through text-gray-400">
-                ₹{p.originalPrice || p.price}
-              </span>
-              <span className="text-red-500 font-semibold">₹{p.price}</span>
-              {p.originalPrice && (
-                <span className="text-green-600 font-medium">
-                  {Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100)}% off
+              <div className="h-40 flex items-center justify-center">
+                <img
+                  src={p.images?.[0]}
+                  alt={p.productName}
+                  className="h-full object-contain"
+                />
+              </div>
+
+              <h3 className="text-sm font-medium mt-2 line-clamp-2">
+                {p.productName}
+              </h3>
+
+              <div className="flex items-center gap-2 mt-1 text-sm">
+                {original > selling && (
+                  <span className="line-through text-gray-400">
+                    ₹{original}
+                  </span>
+                )}
+
+                <span className="text-red-500 font-semibold">
+                  ₹{selling}
                 </span>
-              )}
+
+                {discount > 0 && (
+                  <span className="text-green-600 font-medium">
+                    {discount}% off
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

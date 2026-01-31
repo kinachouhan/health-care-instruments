@@ -4,13 +4,34 @@ import cloudinary from "../cloudinary/cloudinary.js"
 
 export const addProduct = async (req, res) => {
   try {
-    const { productName, description, price, category, subCategory, stock } = req.body;
+    const {
+      productName,
+      description,
+      originalPrice,
+      sellingPrice,
+      category,
+      subCategory,
+      stock,
+    } = req.body;
 
     const stockNum = Number(stock);
-    if (isNaN(stockNum) || stockNum < 0)
+    if (isNaN(stockNum) || stockNum < 0) {
       return res.status(400).json({ success: false, message: "Invalid stock value" });
+    }
 
-   
+    if (!originalPrice || !sellingPrice) {
+      return res.status(400).json({
+        success: false,
+        message: "Original price and selling price are required",
+      });
+    }
+
+    if (Number(sellingPrice) > Number(originalPrice)) {
+      return res.status(400).json({
+        success: false,
+        message: "Selling price cannot be greater than original price",
+      });
+    }
 
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -21,7 +42,8 @@ export const addProduct = async (req, res) => {
 
     const imageUrls = [];
     for (const file of req.files) {
-      if (!file || !file.buffer) continue; // 🔥 skip invalid
+      if (!file?.buffer) continue;
+
       const secureUrl = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "products" },
@@ -32,17 +54,17 @@ export const addProduct = async (req, res) => {
         );
         stream.end(file.buffer);
       });
+
       imageUrls.push(secureUrl);
     }
-
-
-    console.log("REQ.BODY:", req.body);
-    console.log("REQ.FILES:", req.files);
 
     const product = await Product.create({
       productName,
       description,
-      price: Number(price),
+      price: {
+        original: Number(originalPrice),
+        selling: Number(sellingPrice),
+      },
       category,
       subCategory,
       totalStock: stockNum,
@@ -56,8 +78,6 @@ export const addProduct = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
-
 
 
 export const getAllProducts = async (req, res) => {
@@ -155,50 +175,62 @@ export const getProduct = async (req, res) => {
 }
 
 
-
-
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      productName,
-      description,
-      price,
-      category,
-      subCategory,
-      stock,      
-      addStock,  
-    } = req.body;
-
-    if (!productName || !description || !price || !category || !subCategory) {
-      return res.status(400).json({ message: "All required fields must be provided" });
-    }
-
     const product = await Product.findById(id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    const {
+      productName,
+      description,
+      category,
+      subCategory,
+      stock,
+      addStock,
+      originalPrice,
+      sellingPrice,
+    } = req.body;
+
+    if (!productName || !description || !category || !subCategory) {
+      return res
+        .status(400)
+        .json({ message: "All required fields must be provided" });
+    }
+
     product.productName = productName;
     product.description = description;
-    product.price = Number(price);
     product.category = category;
     product.subCategory = subCategory;
 
+    if (originalPrice !== undefined && sellingPrice !== undefined) {
+      if (Number(sellingPrice) > Number(originalPrice)) {
+        return res.status(400).json({
+          message: "Selling price cannot be greater than original price",
+        });
+      }
+      product.price = {
+        original: Number(originalPrice),
+        selling: Number(sellingPrice),
+      };
+    }
+
     if (stock !== undefined) {
-    product.totalStock = Number(stock);
+      product.totalStock = Number(stock);
       product.availableStock = Number(stock);
     } else if (addStock) {
-      
       product.totalStock += Number(addStock);
       product.availableStock += Number(addStock);
     }
 
-    
     if (req.files && req.files.length > 0) {
-     
       const imageUrls = [];
       for (const file of req.files) {
-        const result = await cloudinary.uploader.upload(file.path, { folder: "products" });
+        const result = await cloudinary.uploader.upload(file.path, {
+          folder: "products",
+        });
         imageUrls.push(result.secure_url);
       }
       product.images = imageUrls;
@@ -206,7 +238,9 @@ export const updateProduct = async (req, res) => {
 
     await product.save();
 
-    res.status(200).json({ message: "Product updated successfully", responseData: product });
+    res
+      .status(200)
+      .json({ message: "Product updated successfully", responseData: product });
   } catch (error) {
     console.error("Update Product Error:", error);
     res.status(500).json({ message: error.message || "Something went wrong" });
