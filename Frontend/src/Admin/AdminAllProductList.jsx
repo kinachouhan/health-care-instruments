@@ -4,6 +4,24 @@ import { getAllProduct, deleteProduct } from "../Redux/product";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+/* =======================
+   ✅ PRICE NORMALIZER
+======================= */
+const getPrices = (price) => {
+  if (typeof price === "number") {
+    return { selling: price, original: price };
+  }
+
+  if (typeof price === "object" && price !== null) {
+    return {
+      selling: price.selling ?? price.original ?? 0,
+      original: price.original ?? price.selling ?? 0,
+    };
+  }
+
+  return { selling: 0, original: 0 };
+};
+
 export const AdminAllProductList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -78,8 +96,12 @@ export const AdminAllProductList = () => {
           </thead>
 
           <tbody>
-            {products.map((product, index) =>
-              product ? (
+            {products.map((product, index) => {
+              if (!product) return null;
+
+              const { selling, original } = getPrices(product.price);
+
+              return (
                 <tr key={product._id} className="hover:bg-gray-50">
                   <td className="p-2 border text-center">
                     {(page - 1) * limit + index + 1}
@@ -89,20 +111,23 @@ export const AdminAllProductList = () => {
                   <td className="p-2 border">{product.category}</td>
                   <td className="p-2 border">{product.subCategory}</td>
 
-            
+                  {/* ✅ FIXED PRICE */}
                   <td className="p-2 border">
                     <div className="flex flex-col">
                       <span className="font-semibold text-green-600">
-                        ₹{product.price?.selling}
+                        ₹{selling}
                       </span>
-                      <span className="text-gray-400 line-through text-sm">
-                        ₹{product.price?.original}
-                      </span>
+
+                      {original > selling && (
+                        <span className="text-gray-400 line-through text-sm">
+                          ₹{original}
+                        </span>
+                      )}
                     </div>
                   </td>
 
                   <td className="p-2 border text-center">
-                    {product?.availableStock > 0
+                    {product.availableStock > 0
                       ? `${product.availableStock} in stock`
                       : "Out of stock"}
                   </td>
@@ -115,7 +140,9 @@ export const AdminAllProductList = () => {
                         className="w-14 h-14 object-cover rounded mx-auto"
                       />
                     ) : (
-                      <span className="text-gray-400 text-sm">No image</span>
+                      <span className="text-gray-400 text-sm">
+                        No image
+                      </span>
                     )}
                   </td>
 
@@ -139,12 +166,13 @@ export const AdminAllProductList = () => {
                     </button>
                   </td>
                 </tr>
-              ) : null
-            )}
+              );
+            })}
           </tbody>
         </table>
       </div>
 
+      {/* PAGINATION */}
       <div className="flex justify-center gap-2 mt-6 flex-wrap">
         <button
           disabled={page === 1}
