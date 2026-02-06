@@ -1,8 +1,5 @@
 import { WishList } from "../Models/wishlistModel.js";
 
-/* =========================
-   GET MY WISHLIST
-========================= */
 export const getMyWishList = async (req, res) => {
   try {
     const wishList = await WishList
@@ -21,9 +18,7 @@ export const getMyWishList = async (req, res) => {
   }
 };
 
-/* =========================
-   ADD TO WISHLIST
-========================= */
+
 export const addtoWishList = async (req, res) => {
   try {
     const { productId } = req.body;
@@ -67,9 +62,6 @@ export const addtoWishList = async (req, res) => {
   }
 };
 
-/* =========================
-   REMOVE FROM WISHLIST
-========================= */
 export const removeFromWishList = async (req, res) => {
   try {
     const { productId } = req.body;
@@ -104,9 +96,7 @@ export const removeFromWishList = async (req, res) => {
   }
 };
 
-/* =========================
-   CLEAR WISHLIST
-========================= */
+
 export const clearWishList = async (req, res) => {
   try {
     await WishList.findOneAndUpdate(
@@ -119,6 +109,51 @@ export const clearWishList = async (req, res) => {
       message: "Wishlist has been cleared"
     });
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
+
+export const mergeGuestWishList = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { items } = req.body; 
+
+    let wishList = await WishList.findOne({ user: userId });
+
+    if (!wishList) {
+      wishList = await WishList.create({
+        user: userId,
+        items
+      });
+    } else {
+      items.forEach((guestItem) => {
+        const exists = wishList.items.some(
+          item => item.product.toString() === guestItem.product.toString()
+        );
+
+        if (!exists) {
+          wishList.items.push({
+            product: guestItem.product
+          });
+        }
+      });
+
+      await wishList.save();
+    }
+
+    await wishList.populate("items.product");
+
+    res.status(200).json({
+      success: true,
+      message: "Merged Wishlist Successfully",
+      responseData: wishList.items
+    });
+  } catch (error) {
+    console.error("MERGE WishList ERROR 👉", error);
     res.status(500).json({
       success: false,
       message: "Internal server error"
