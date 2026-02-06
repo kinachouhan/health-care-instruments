@@ -24,6 +24,8 @@ export const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated)
+
   const totalPrice = items.reduce((total, item) => {
     const { selling } = getPrices(item.product?.price);
     return total + selling * item.quantity;
@@ -54,7 +56,6 @@ export const Cart = () => {
           My <span className="text-black">CART</span>
         </h1>
 
-
         <div className="flex flex-col gap-6">
           {items.map((item, index) => {
             const { selling, original } = getPrices(item.product?.price);
@@ -68,7 +69,7 @@ export const Cart = () => {
                 key={item.product?._id || `deleted-${index}`}
                 className="flex flex-col sm:flex-row sm:justify-between gap-4 border border-gray-300 p-4 rounded"
               >
-              
+
                 <div className="flex gap-4">
                   <img
                     className="h-24 w-24 object-cover rounded"
@@ -107,13 +108,17 @@ export const Cart = () => {
                       onClick={() => {
                         if (item.quantity === 1) {
                           dispatch(
-                            removeFromCart({ productId: item.product._id })
+                            removeFromCart({
+                              productId: item.product._id,
+                              isLoggedIn,
+                            })
                           );
                         } else {
                           dispatch(
                             addToCart({
-                              productId: item.product._id,
+                              product: item.product,
                               quantity: -1,
+                              isLoggedIn,
                             })
                           );
                         }
@@ -130,8 +135,9 @@ export const Cart = () => {
                       onClick={() =>
                         dispatch(
                           addToCart({
-                            productId: item.product._id,
+                            product: item.product,
                             quantity: 1,
+                            isLoggedIn
                           })
                         )
                       }
@@ -145,7 +151,7 @@ export const Cart = () => {
                     disabled={cartLoading}
                     onClick={() =>
                       dispatch(
-                        removeFromCart({ productId: item.product._id })
+                        removeFromCart({ productId: item.product._id, isLoggedIn })
                       )
                     }
                   >
@@ -157,7 +163,7 @@ export const Cart = () => {
           })}
         </div>
 
-       
+
         <div className="flex justify-end my-10 border-t border-gray-400 py-12">
           <div className="w-full sm:w-auto flex flex-col gap-4">
             <h1 className="font-bold text-3xl">Cart Totals</h1>
@@ -181,7 +187,7 @@ export const Cart = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 disabled={cartLoading}
-                onClick={() => dispatch(clearCart())}
+                onClick={() => dispatch(clearCart(isLoggedIn))}
                 className="border border-sky-600 hover:bg-sky-600 hover:text-white px-6 py-2"
               >
                 Clear Cart

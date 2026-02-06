@@ -120,3 +120,52 @@ export const clearCart = async (req, res) => {
   }
 };
 
+
+export const mergeCart = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { items } = req.body;
+
+    let cart = await Cart.findOne({ user: userId });
+
+    if (!cart) {
+      cart = await Cart.create({
+        user: userId,
+        items
+      });
+    } else {
+      items.forEach((guestItem) => {
+        const existingItem = cart.items.find(
+          (item) =>
+            item.product.toString() === guestItem.product
+        );
+
+        if (existingItem) {
+          existingItem.quantity += guestItem.quantity;
+        } else {
+          cart.items.push({
+            product: guestItem.product,
+            quantity: guestItem.quantity
+          });
+        }
+      });
+
+      await cart.save();
+    }
+
+    await cart.populate("items.product");
+
+    res.status(200).json({
+      success: true,
+      message: "Cart merged successfully",
+      responseData: cart.items
+    });
+
+  } catch (error) {
+    console.error("MERGE CART ERROR 👉", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};

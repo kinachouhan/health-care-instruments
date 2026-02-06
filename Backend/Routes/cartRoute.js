@@ -4,6 +4,7 @@ import {
   addToCart,
   removeFromCart,
   clearCart,
+  mergeCart
 } from  "../Controllers/cartController.js";
 
 
@@ -15,6 +16,7 @@ router.get("/", authMiddleware, getMyCart);
 router.post("/add", authMiddleware, addToCart);
 router.delete("/remove", authMiddleware, removeFromCart);
 router.delete("/clear", authMiddleware, clearCart);
+router.post("/merge" , authMiddleware , mergeCart)
 
 
 export default router;

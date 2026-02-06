@@ -16,7 +16,7 @@ export const SinglePageProduct = () => {
     (state) => state.product
   );
   const { items, cartLoading } = useSelector((state) => state.cart);
-  const { isAuthenticated } = useSelector((state) => state.user) || {};
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated) || {};
 
   const [activeTab, setActiveTab] = useState("description");
   const reviews = product?.reviews || [];
@@ -45,16 +45,29 @@ export const SinglePageProduct = () => {
   if (!product)
     return <p className="p-10 text-center text-gray-500">Product not found</p>;
 
-  const inCart = items.some((item) => item.product._id === product._id);
+  const inCart = items.some((item) => item.product?._id === product._id);
 
   const handleCartClick = () => {
     if (cartLoading) return;
+
     if (inCart) {
-      dispatch(removeFromCart({ productId: product._id }));
+      dispatch(
+        removeFromCart({
+          productId: product._id,
+          isLoggedIn,
+        })
+      );
     } else {
-      dispatch(addToCart({ productId: product._id, quantity: 1 }));
+      dispatch(
+        addToCart({
+          product,
+          quantity: 1,
+          isLoggedIn,
+        })
+      );
     }
   };
+
 
 
   const sellingPrice =
@@ -71,7 +84,7 @@ export const SinglePageProduct = () => {
     <div className="bg-[#faf7f3] min-h-screen">
       <div className="max-w-[1300px] mx-auto px-4 py-10">
 
-       
+
         <nav className="text-sm text-gray-500 mb-8">
           <span onClick={() => navigate("/")} className="cursor-pointer hover:text-red-500">
             Home
@@ -100,7 +113,7 @@ export const SinglePageProduct = () => {
             </div>
           </div>
 
-        
+
           <div>
             <h1 className="text-3xl font-extrabold">{product.productName}</h1>
 
@@ -125,16 +138,15 @@ export const SinglePageProduct = () => {
               <div className="flex items-center gap-2"><FaUndo /> Easy Returns</div>
             </div>
 
-          
+
             <div className="my-5 flex gap-4">
               <button
                 onClick={handleCartClick}
                 disabled={cartLoading}
-                className={`w-full px-4 py-2 rounded-lg text-white font-semibold ${
-                  inCart
-                    ? "bg-gray-500 cursor-not-allowed"
+                className={`w-full px-4 py-2 rounded-lg text-white font-semibold ${inCart
+                    ? "bg-gray-500 hover:bg-red-600"
                     : "bg-red-500 hover:bg-white hover:text-red-500 border hover:border-red-500"
-                }`}
+                  }`}
               >
                 {inCart ? "Remove from Cart" : "Add to Cart"}
               </button>
@@ -149,7 +161,7 @@ export const SinglePageProduct = () => {
           </div>
         </div>
 
-     
+
         {relatedProducts.length > 0 && (
           <div className="my-20">
             <h2 className="text-2xl font-bold mb-6">Related Products</h2>

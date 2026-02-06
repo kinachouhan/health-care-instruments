@@ -1,4 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+import {
+  getGuestCart,
+  addToGuestCart,
+  removeFromGuestCart,
+  clearGuestCart
+} from "../utils/guestCart";
+
+
 const API = import.meta.env.VITE_API_URL;
 
 const initialState = {
@@ -7,11 +16,15 @@ const initialState = {
   error: null,
 };
 
-
 export const fetchCart = createAsyncThunk(
   "cart/fetchCart",
-  async (_, { rejectWithValue }) => {
+  async (isLoggedIn, { rejectWithValue }) => {
     try {
+
+      if(!isLoggedIn){
+           return  getGuestCart()
+      }
+      
       const res = await fetch(`${API}/api/v1/cart`, {
         credentials: "include",
       });
@@ -24,22 +37,32 @@ export const fetchCart = createAsyncThunk(
   }
 );
 
-
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ productId, quantity = 1 }, { rejectWithValue }) => {
+  async ({ product , isLoggedIn }, { rejectWithValue }) => {
     try {
+
+      if(!isLoggedIn){
+          addToGuestCart({
+              product: product._id,
+              quantity: 1,
+              name: product.name,
+              price: product.price,
+              image: product.image
+          })
+
+          return getGuestCart()
+      }
+
       const res = await fetch(`${API}/api/v1/cart/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ productId, quantity }),
+        body: JSON.stringify({ productId: product._id, quantity:1 }),
       });
       const data = await res.json();
       if (!data.success) return rejectWithValue(data.message);
-
-      // Ensure payload is items array
-      return data.responseData || data.cart.items;
+      return data.responseData 
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -48,8 +71,14 @@ export const addToCart = createAsyncThunk(
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async ({ productId }, { rejectWithValue }) => {
+  async ({ productId , isLoggedIn }, { rejectWithValue }) => {
     try {
+
+      if(!isLoggedIn){
+           removeFromGuestCart(productId)
+           return getGuestCart()
+      }
+
       const res = await fetch(`${API}/api/v1/cart/remove`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -59,7 +88,7 @@ export const removeFromCart = createAsyncThunk(
       const data = await res.json();
       if (!data.success) return rejectWithValue(data.message);
 
-      return data.responseData; // always items array
+      return data.responseData; 
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -68,8 +97,14 @@ export const removeFromCart = createAsyncThunk(
 
 export const clearCart = createAsyncThunk(
   "cart/clearCart",
-  async (_, { rejectWithValue }) => {
+  async ( isLoggedIn, { rejectWithValue }) => {
     try {
+
+      if(!isLoggedIn){
+           clearGuestCart()
+           return []
+      }
+
       const res = await fetch(`${API}/api/v1/cart/clear`, {
         method: "DELETE",
         credentials: "include", 
