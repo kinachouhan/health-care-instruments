@@ -16,7 +16,10 @@ export const SinglePageProduct = () => {
     (state) => state.product
   );
   const { items, cartLoading } = useSelector((state) => state.cart);
-  const isLoggedIn = useSelector((state) => state.user.isAuthenticated) || {};
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
+
+
+  console.log(items)
 
   const [activeTab, setActiveTab] = useState("description");
   const reviews = product?.reviews || [];
@@ -67,8 +70,6 @@ export const SinglePageProduct = () => {
       );
     }
   };
-
-
 
   const sellingPrice =
     typeof product.price === "number"

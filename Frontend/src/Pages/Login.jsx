@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../Redux/auth";
 import { useNavigate } from "react-router-dom"
+import { mergeCart, fetchCart } from "../Redux/cartSlice";
+import { getGuestCart, clearGuestCart } from "../utils/guestCart";
 
 export const Login = () => {
 
@@ -26,17 +28,28 @@ export const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const result = await dispatch(login(formData));
-        if (login.fulfilled.match(result)) {
-            const user = result.payload;
-            if (user.role === "admin") {
-                navigate("/admin");
-            } else {
-                navigate("/");
-            }
-        } else {
+        if (!login.fulfilled.match(result)) {
             console.error("Login failed:", result.payload);
+            return;
         }
-    }
+        const guestCart = getGuestCart();
+        if (guestCart.length > 0) {
+            await dispatch(mergeCart(guestCart));
+            clearGuestCart();
+        }
+        await dispatch(fetchCart(true));
+        const user = result.payload;
+
+        if (user.role === "admin") {
+            navigate("/admin");
+        } else {
+            navigate("/");
+        }
+    };
+    
+
+
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
 

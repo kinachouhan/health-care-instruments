@@ -1,39 +1,50 @@
 
-export const getGuestCart = ()=>{ 
-     return(
-         JSON.parse(localStorage.getItem("cart") || [])
-     )
-}
+export const getGuestCart = () => {
+  return JSON.parse(localStorage.getItem("cart") || "[]");
+};
+
+export const addToGuestCart = ({ product, quantity = 1 }) => {
+  const cart = getGuestCart();
+
+  const existing = cart.find(
+    (item) => item.product._id === product._id
+  );
+
+  if (existing) {
+    existing.quantity += quantity;
+
+    if (existing.quantity <= 0) {
+      const filtered = cart.filter(
+        (item) => item.product._id !== product._id
+      );
+      localStorage.setItem("cart", JSON.stringify(filtered));
+      return;
+    }
+  } else {
+    cart.push({
+      product: {
+        _id: product._id,
+        productName: product.productName,
+        price: product.price,
+        images: product.images,
+      },
+      quantity,
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
 
 
-export const addToGuestCart = (product)=>{
-      const cart = getGuestCart()
+export const removeFromGuestCart = (productId) => {
+  const cart = getGuestCart().filter(
+    (item) => item.product._id !== productId
+  );
 
-      const existing = cart.items.find( item => item.product === product.product)
-
-      if(existing){
-           existing.quantity += product.quantity || 1
-      }
-      else{
-         cart.push({
-              product: product.product,
-              quantity: product.quantity,
-              price: product.price,
-              image: product.image,
-              name: product.name
-         })
-      }
-      localStorage.setItem( "cart" , JSON.stringify(cart))
-}
-
-export const removeFromGuestCart = (productId)=>{
-      const cart = getGuestCart().filter(
-          item => item.product !== productId
-      )
-      localStorage.setItem("cart" , JSON.stringify(cart))
-}
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
 
 
-export const clearGuestCart = ()=>{
-      localStorage.removeItem("cart")
-}
+export const clearGuestCart = () => {
+  localStorage.removeItem("cart");
+};

@@ -14,20 +14,30 @@ import { Login } from './Pages/Login'
 import { Signup } from './Pages/Signup'
 import { VerifyOtp } from './Pages/VerifyOtp'
 import {getMe} from "./Redux/auth"
-import { useDispatch } from 'react-redux'
+import { useDispatch , useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { Products } from './Pages/Products'
 import { Toaster } from "react-hot-toast";
 import { SinglePageProduct } from './Pages/SinglePageProduct'
 import { Profile } from './Pages/Profile'
+import { fetchCart } from './Redux/cartSlice'
 
 function App() {
 
    const dispatch = useDispatch()
+   const isAuthenticated = useSelector(
+    (state) => state.user.isAuthenticated
+  );
 
    useEffect( ()=>{
           dispatch(getMe())
    },[])
+
+   useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchCart(true));
+    }
+  }, [isAuthenticated, dispatch]);
 
   const router = createBrowserRouter([
     {

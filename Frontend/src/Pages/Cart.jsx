@@ -66,7 +66,8 @@ export const Cart = () => {
 
             return (
               <div
-                key={item.product?._id || `deleted-${index}`}
+              key={`${item.product._id}-${index}`}
+          
                 className="flex flex-col sm:flex-row sm:justify-between gap-4 border border-gray-300 p-4 rounded"
               >
 

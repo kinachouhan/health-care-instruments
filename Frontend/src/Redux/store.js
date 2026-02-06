@@ -4,55 +4,16 @@ import userReducer from "./auth.js"
 import productReducer from "./product.js"
 import cartReducer from "./cartSlice.js"
 import wishListReducer from "./wishListSlice.js"
-import {
-    persistStore,
-    persistReducer,
-    FLUSH,
-    REHYDRATE,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER,
-} from "redux-persist";
 
-import storage from "redux-persist/lib/storage";
-
-const cartPersistConfig = {
-    key: "cart",
-    storage,
-};
-
-const persistedCartReducer = persistReducer(
-    cartPersistConfig,
-    cartReducer
-);
-
-/* ORDER PERSIST */
-// const orderPersistConfig = {
-//   key: "order",
-//   storage,
-// };
-
-// const persistedOrderReducer = persistReducer(
-//   orderPersistConfig,
-//   orderReducer
-// );
 
 export const store = configureStore({
     reducer: {
         user: userReducer,
         product: productReducer,
-        cart: persistedCartReducer ,
-        wishList : wishListReducer 
-         
+        cart: cartReducer ,
+        wishList : wishListReducer   
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-            },
-        }),
 });
 
 
-export const persistor = persistStore(store);
+export default store;

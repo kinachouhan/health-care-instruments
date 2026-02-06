@@ -44,20 +44,22 @@ export const Header = () => {
     dispatch(fetchWishList());
   }, [dispatch,]);
 
-
   useEffect(() => {
-    dispatch(fetchCart());
-  }, [dispatch]);
+    if (isAuthenticated) {
+      dispatch(fetchCart(true));
+    }
+  }, [dispatch, isAuthenticated]);
+
+
 
   const handleLogout = async () => {
     await dispatch(logout());
     setSidebarOpen(false);
-    navigate("/login");
+    navigate("/", { replace: true });
   };
 
 
   const safeItems = Array.isArray(items) ? items : [];
-
   const cartCount = safeItems.reduce(
     (total, item) => total + (item.quantity || 0),
     0
@@ -68,14 +70,12 @@ export const Header = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-18 items-center justify-between gap-6">
 
-          {/* Logo */}
           <div className="flex-shrink-0">
             <div onClick={() => navigate("/")} className="w-32 md:w-40 cursor-pointer">
               <Logo className="w-full h-auto" />
             </div>
           </div>
 
-          {/* Search (Desktop) */}
           <div className="hidden md:flex flex-1 justify-center">
             <div className="relative w-full max-w-lg">
               <CiSearch onClick={submitSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
@@ -98,10 +98,7 @@ export const Header = () => {
             </div>
           </div>
 
-          {/* Icons */}
           <div className="flex items-center gap-3">
-
-            {/* Profile */}
             <button
               onClick={() =>
                 !isAuthenticated ? navigate("/login") : setSidebarOpen(true)
@@ -111,7 +108,7 @@ export const Header = () => {
               <CgProfile className="text-2xl text-gray-700" />
             </button>
 
-            {/* Wishlist */}
+
             <button
               onClick={() => navigate("/wishlist")}
               className="relative rounded-full p-2 hover:bg-gray-100 transition"
@@ -122,7 +119,6 @@ export const Header = () => {
               </span>
             </button>
 
-            {/* Cart */}
             <button
               onClick={() => navigate("/cart")}
               className="relative rounded-full p-2 hover:bg-gray-100 transition"
@@ -137,7 +133,7 @@ export const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Search */}
+
         <div className="md:hidden py-3">
           <div className="relative">
             <CiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
@@ -162,7 +158,7 @@ export const Header = () => {
         </div>
       </div>
 
-      {/* Sidebar */}
+
       {isAuthenticated && sidebarOpen && (
         <div
           className="fixed inset-0 backdrop-blur-sm z-40"
@@ -183,7 +179,6 @@ export const Header = () => {
             >
               Profile
             </button>
-
             <button
               onClick={() => {
                 navigate("/orders");
