@@ -1,6 +1,11 @@
 
 export const getGuestCart = () => {
-  return JSON.parse(localStorage.getItem("cart") || "[]");
+  try {
+    const cart = localStorage.getItem("cart");
+    return cart ? JSON.parse(cart) : [];
+  } catch (err) {
+    return [];
+  }
 };
 
 export const addToGuestCart = ({ product, quantity = 1 }) => {

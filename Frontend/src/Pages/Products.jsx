@@ -174,7 +174,7 @@ export const Products = () => {
 
           <section className="md:col-span-3">
             {loading ? (
-              <p>Loading...</p>
+              <p className="text-5xl text-center h-screen w-full">Loading...</p>
             ) : paginatedProducts.length === 0 ? (
               <div className="bg-white h-screen justify-center flex items-center flex-col rounded-2xl shadow-md p-10 text-center">
                 <h2 className="text-xl font-semibold text-gray-700">

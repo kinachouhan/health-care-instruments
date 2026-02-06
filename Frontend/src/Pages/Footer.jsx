@@ -28,12 +28,12 @@ export const Footer = () => {
                 {/* Quick Links */}
                 <div className="flex flex-col gap-3">
                     <h3 className="text-white font-semibold mb-2">TOP CATEGORIES</h3>
-                    <Link  to="/" className="hover:text-blue-400 transition text-gray-400">Equipment</Link>
-                    <Link to="/about" className="hover:text-blue-400 transition text-gray-400">Orthodontics</Link>
-                    <Link to="/contact" className="hover:text-blue-400 transition text-gray-400">Restorative</Link>
-                    <Link to="/cart" className="hover:text-blue-400 transition text-gray-400">Instruments</Link>
-                    <Link to="/wishlist" className="hover:text-blue-400 transition text-gray-400">Endodontics</Link>
-                    <Link to="/wishlist" className="hover:text-blue-400 transition text-gray-400">Impression</Link>
+                    <Link  to="/products?category=Equipment" className="hover:text-blue-400 transition text-gray-400">Equipment</Link>
+                    <Link to="/products?category=Orthodontics" className="hover:text-blue-400 transition text-gray-400">Orthodontics</Link>
+                    <Link to="/products?category=Restorative" className="hover:text-blue-400 transition text-gray-400">Restorative</Link>
+                    <Link to="/products?category=Instruments" className="hover:text-blue-400 transition text-gray-400">Instruments</Link>
+                    <Link to="/products?category=Endodontics" className="hover:text-blue-400 transition text-gray-400">Endodontics</Link>
+                    <Link to="/products?category=Impression" className="hover:text-blue-400 transition text-gray-400">Impression</Link>
                 </div>
 
 

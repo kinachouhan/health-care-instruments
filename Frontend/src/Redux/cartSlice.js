@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { logout } from "../Redux/auth";
 
 import {
   getGuestCart,
@@ -11,7 +12,7 @@ import {
 const API = import.meta.env.VITE_API_URL;
 
 const initialState = {
-  items: [],
+  items: getGuestCart() || [],
   cartLoading: false,
   error: null,
 };
@@ -242,6 +243,10 @@ const cartSlice = createSlice({
       .addCase(mergeCart.rejected, (state, action) => {
         state.cartLoading = false;
         state.error = action.payload;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.items = [];
+        state.cartLoading = false;
       })
   },
 });

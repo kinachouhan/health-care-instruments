@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { logout } from "../Redux/auth";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -6,9 +7,7 @@ const initialState = {
     items: [],
     wishListLoading: false,
     error: null,
-};
-
-
+}
 
 export const fetchWishList = createAsyncThunk(
     "wishlist/fetch",
@@ -26,7 +25,6 @@ export const fetchWishList = createAsyncThunk(
     }
 );
 
-/* ================= ADD ================= */
 export const addToWishList = createAsyncThunk(
     "wishlist/add",
     async ({ productId }, { rejectWithValue }) => {
@@ -39,14 +37,14 @@ export const addToWishList = createAsyncThunk(
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.message);
-            return data.responseData; // ALWAYS items array
+            return data.responseData;
         } catch (err) {
             return rejectWithValue(err.message);
         }
     }
 );
 
-/* ================= REMOVE ================= */
+
 export const removeFromWishList = createAsyncThunk(
     "wishlist/remove",
     async ({ productId }, { rejectWithValue }) => {
@@ -66,9 +64,7 @@ export const removeFromWishList = createAsyncThunk(
     }
 );
 
-/* =========================
-   CLEAR WISHLIST
-========================= */
+
 export const clearWishList = createAsyncThunk(
     "wishlist/clearWishList",
     async (_, { rejectWithValue }) => {
@@ -88,9 +84,7 @@ export const clearWishList = createAsyncThunk(
     }
 );
 
-/* =========================
-   SLICE
-========================= */
+
 const wishListSlice = createSlice({
     name: "wishList",
     initialState,
@@ -148,6 +142,10 @@ const wishListSlice = createSlice({
             .addCase(clearWishList.rejected, (state, action) => {
                 state.wishListLoading = false;
                 state.error = action.payload;
+            })
+
+            .addCase(logout.fulfilled, (state) => {
+                state.items = [];
             });
     },
 });

@@ -178,29 +178,26 @@ export const login = createAsyncThunk(
 
 
 export const logout = createAsyncThunk(
-      "auth/logout",
-      async (_, { rejectWithValue }) => {
-            try {
-                  const res = await fetch(`${API}/api/v1/user/logout`, {
-                        method: "POST",
-                        credentials: "include",
-                  });
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${API}/api/v1/user/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
 
-                  const data = await res.json();
+      const data = await res.json();
 
-                  if (!res.ok || !data.success) {
-                        return rejectWithValue(data.message || "Logout failed");
-                  }
-
-                  return data;
-            } catch (error) {
-                  return rejectWithValue(error.message);
-            }
+      if (!res.ok || !data.success) {
+        return rejectWithValue(data.message || "Logout failed");
       }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
 );
-
-
-
 
 
 const authSlice = createSlice({
