@@ -7,8 +7,10 @@ export const WishList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { items, wishListLoading } = useSelector((state) => state.wishList);
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
 
-  if (!items.length) {
+
+ if (!wishListLoading && items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] text-gray-500">
         <FaHeartBroken className="text-6xl mb-4 text-red-400" />
@@ -26,7 +28,7 @@ export const WishList = () => {
 
         <button
           disabled={wishListLoading}
-          onClick={() => dispatch(clearWishList())}
+          onClick={() => dispatch(clearWishList(isLoggedIn))}
           className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-sky-600  hover:bg-sky-800 transition disabled:opacity-50"
         >
           <FaTrashAlt />
@@ -51,18 +53,24 @@ export const WishList = () => {
               key={product._id}
               className="relative bg-white rounded-xl shadow hover:shadow-xl transition group"
             >
-       
+
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  dispatch(removeFromWishList({ productId: product._id }));
+                  dispatch(
+                    removeFromWishList({
+                      productId: product._id,
+                      isLoggedIn,
+                    })
+                  );
                 }}
+
                 className="absolute top-3 right-3 z-10 p-2 text-red-500 rounded-full bg-white shadow hover:bg-red-500 hover:text-white transition"
               >
                 <FaTrashAlt className="text-sm" />
               </button>
 
-          
+
               <div
                 onClick={() => navigate(`/product/${product._id}`)}
                 className="cursor-pointer p-4 py-8"

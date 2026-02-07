@@ -1,34 +1,36 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishList, removeFromWishList } from "../Redux/wishListSlice";
-import { useNavigate } from "react-router-dom";
 
-export const WishListHeart = ({ productId }) => {
+export const WishListHeart = ({ product }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const { items, wishListLoading } = useSelector(
-    (state) => state.wishList
+  const { items, wishListLoading } = useSelector((state) => state.wishList);
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
+
+  const isWished = items.some(
+    (item) => item.product?._id === product._id
   );
- 
-
-  const isWished = items?.some(
-  (item) => item?.product?._id?.toString() === productId?.toString()
-)
 
   const handleClick = (e) => {
-  e.stopPropagation();
+    e.stopPropagation();
+    if (wishListLoading) return;
 
-     console.log("CLICKED HEART 👉", productId);
-
-  if (wishListLoading) return;
-
-  if (isWished) {
-    dispatch(removeFromWishList({ productId }));
-  } else {
-    dispatch(addToWishList({ productId }));
-  }
-
+    if (isWished) {
+      dispatch(
+        removeFromWishList({
+          productId: product._id,
+          isLoggedIn,
+        })
+      );
+    } else {
+      dispatch(
+        addToWishList({
+          product,
+          isLoggedIn,
+        })
+      );
+    }
   };
 
   return (

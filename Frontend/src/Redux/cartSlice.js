@@ -71,7 +71,6 @@ export const addToCart = createAsyncThunk(
   }
 );
 
-
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
   async ({ productId, isLoggedIn }, { rejectWithValue }) => {
@@ -149,7 +148,6 @@ export const mergeCart = createAsyncThunk(
     }
   }
 );
-
 
 
 const cartSlice = createSlice({

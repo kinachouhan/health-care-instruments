@@ -21,6 +21,7 @@ import { Toaster } from "react-hot-toast";
 import { SinglePageProduct } from './Pages/SinglePageProduct'
 import { Profile } from './Pages/Profile'
 import { fetchCart } from './Redux/cartSlice'
+import { fetchWishList } from './Redux/wishListSlice'
 
 function App() {
 
@@ -38,6 +39,14 @@ function App() {
       dispatch(fetchCart(true));
     }
   }, [isAuthenticated, dispatch]);
+
+
+  useEffect(() => {
+     if (isAuthenticated) {
+    dispatch(fetchWishList(true));
+     }
+  }, [isAuthenticated, dispatch]);
+
 
   const router = createBrowserRouter([
     {
