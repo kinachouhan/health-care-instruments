@@ -22,6 +22,7 @@ import { SinglePageProduct } from './Pages/SinglePageProduct'
 import { Profile } from './Pages/Profile'
 import { fetchCart } from './Redux/cartSlice'
 import { fetchWishList } from './Redux/wishListSlice'
+import { Checkout } from './Pages/Checkout'
 
 function App() {
 
@@ -60,7 +61,8 @@ function App() {
         { path: "/wishlist", element: <WishList /> },
         { path: "/products", element: <Products/> },
         {path: "/product/:id" , element: <SinglePageProduct/> },
-        {path: "/profile" , element: <Profile/> }
+        {path: "/profile" , element: <Profile/> },
+        {path: "/checkout" , element: <Checkout/>}
       ],
     },
     {
@@ -84,7 +86,8 @@ function App() {
     {
       path:"/verify-otp",
       element: <VerifyOtp/>
-    }
+    },
+   
   ]);
 
   return (

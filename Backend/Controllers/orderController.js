@@ -1,4 +1,4 @@
-import { Order } from "../Models/orderModel";
+import { Order } from "../Models/orderModel.js";
 
 
 export const placeOrder = async (req, res) => {

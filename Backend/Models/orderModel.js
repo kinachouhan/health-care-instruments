@@ -15,23 +15,13 @@ const orderSchema = new mongoose.Schema(
           ref: "Product",
           required: true,
         },
-        productName: {
-          type: String,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
+        productName: String,
+        price: Number,
         quantity: {
           type: Number,
-          required: true,
           min: 1,
         },
-        images: {
-          type: [String],
-          default: [],
-        },
+        images: [String],
       },
     ],
 
@@ -65,10 +55,12 @@ const orderSchema = new mongoose.Schema(
       default: "Order-Placed",
     },
 
-    userData: {
+  
+    deliveryAddress: {
       fullName: String,
-      Address1: String,
-      Address2: String,
+      address1: String,
+      address2: String,
+      city: String,
       state: String,
       zipcode: String,
       country: String,

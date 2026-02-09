@@ -24,12 +24,19 @@ export const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  
+
   const isLoggedIn = useSelector((state) => state.user.isAuthenticated)
 
-  const totalPrice = items.reduce((total, item) => {
+  const subtotal = items.reduce((total, item) => {
     const { selling } = getPrices(item.product?.price);
     return total + selling * item.quantity;
   }, 0);
+
+   const shipping = subtotal > 1000 ? 0 : 80;
+
+   const totalPrice = subtotal + shipping
+
 
   if (!cartLoading && (!items || items.length === 0)) {
     return (
@@ -171,15 +178,15 @@ export const Cart = () => {
 
             <div className="flex flex-col gap-2">
               <h1 className="flex justify-between font-semibold border-b py-2">
-                Subtotal: <span>₹{totalPrice.toFixed(2)}</span>
+                Subtotal: <span>₹{subtotal.toFixed(2)}</span>
               </h1>
 
-              <h1 className="font-semibold">Shipping</h1>
-              <h1>Free Shipping</h1>
+              <h1 className="font-semibold flex justify-between">Shipping:<span>{shipping === 0 ? "Free" : `₹${shipping}`}</span></h1>
+              <p className="text-gray-500 text-sm">Free Delivery on all purchases above ₹1000</p>
 
               <h1 className="flex justify-between font-semibold border-t py-2">
                 Total:
-                <span className="text-green-600">
+                <span className="text-green-700 text-semibold">
                   ₹{totalPrice.toFixed(2)}
                 </span>
               </h1>

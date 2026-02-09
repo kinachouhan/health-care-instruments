@@ -1,6 +1,7 @@
 import { FiHeart } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const getPrices = (price) => {
   if (typeof price === "number") {
@@ -17,8 +18,16 @@ const getPrices = (price) => {
   return { selling: 0, original: 0 };
 };
 
+
+
 export const CategorySection = ({ title, products }) => {
   const navigate = useNavigate();
+
+  const { loading } = useSelector((state) => state.product);
+
+   if (loading) return <div className="flex items-center justify-center h-screen w-full">
+  <div className="w-16 h-16 border-4 border-gray-300 border-t-sky-500 rounded-full animate-spin"></div>
+</div>
 
   return (
     <section className="mb-12 rounded-2xl p-6">

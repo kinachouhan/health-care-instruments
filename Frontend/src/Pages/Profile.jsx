@@ -24,7 +24,7 @@ export const Profile = () => {
         }
     });
 
-    /* 🔥 Sync redux user → local form */
+   
     useEffect(() => {
         if (user) {
             setFormData({
@@ -44,7 +44,6 @@ export const Profile = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // address fields
         if (["street", "city", "state", "country", "zipcode"].includes(name)) {
             setFormData((prev) => ({
                 ...prev,
