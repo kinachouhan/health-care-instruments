@@ -4,8 +4,6 @@ export const Contact = () => {
   return (
     <div className="bg-[#faf7f3] min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-16">
-
-        {/* Header */}
         <div className="text-center mb-14">
           <h1 className="text-4xl font-bold text-gray-800">
             Contact Us
@@ -15,10 +13,7 @@ export const Contact = () => {
           </p>
         </div>
 
-        {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-
-          {/* Contact Info */}
           <div className="bg-white rounded-2xl shadow-md p-8 space-y-6">
             <h2 className="text-2xl font-semibold text-sky-600 mb-2">
               Get in Touch
@@ -35,7 +30,7 @@ export const Contact = () => {
               </div>
               <div>
                 <p className="font-medium">Phone</p>
-                <p className="text-gray-600">+91 9XXXXXXXXX</p>
+                <p className="text-gray-600">+91 9560888720</p>
               </div>
             </div>
 
@@ -62,7 +57,6 @@ export const Contact = () => {
             </div>
           </div>
 
-          {/* Contact Form */}
           <div className="bg-white rounded-2xl shadow-md p-8">
             <h2 className="text-2xl font-semibold text-sky-600 mb-6">
               Send a Message
@@ -103,11 +97,9 @@ export const Contact = () => {
           </div>
         </div>
 
-        {/* Bottom Note */}
         <div className="text-center mt-16 text-gray-600 text-sm">
           We usually respond within 24 hours on business days.
         </div>
-
       </div>
     </div>
   );

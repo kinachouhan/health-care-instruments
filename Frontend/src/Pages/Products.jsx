@@ -42,7 +42,7 @@ export const Products = () => {
     dispatch(getAllProduct({ page: 1, limit: 500 }));
   }, [dispatch]);
 
- 
+
   useEffect(() => {
     setSelectedCategories(categoryParam ? [categoryParam] : []);
     setSelectedSubCategories(subCategoryParam ? [subCategoryParam] : []);
@@ -174,7 +174,10 @@ export const Products = () => {
 
           <section className="md:col-span-3">
             {loading ? (
-              <p className="text-5xl text-center h-screen w-full">Loading...</p>
+              <div className="flex items-center justify-center h-screen w-full">
+                <div className="w-16 h-16 border-4 border-gray-300 border-t-sky-500 rounded-full animate-spin"></div>
+              </div>
+
             ) : paginatedProducts.length === 0 ? (
               <div className="bg-white h-screen justify-center flex items-center flex-col rounded-2xl shadow-md p-10 text-center">
                 <h2 className="text-xl font-semibold text-gray-700">
@@ -230,8 +233,8 @@ export const Products = () => {
                       <button
                         disabled={!inStock}
                         className={`mt-3 w-full py-2 rounded-lg text-white ${inStock
-                            ? "bg-sky-600 hover:bg-red-500"
-                            : "bg-gray-400 cursor-not-allowed"
+                          ? "bg-sky-600 hover:bg-red-500"
+                          : "bg-gray-400 cursor-not-allowed"
                           }`}
                       >
                         Add to Cart
@@ -242,7 +245,7 @@ export const Products = () => {
               </div>
             )}
 
-         
+
             {totalPages > 1 && (
               <div className="flex justify-center mt-10 gap-2">
                 <button
@@ -258,8 +261,8 @@ export const Products = () => {
                     key={pNum}
                     onClick={() => setPage(pNum)}
                     className={`px-4 py-2 rounded ${page === pNum
-                        ? "bg-sky-600 text-white"
-                        : "bg-gray-200"
+                      ? "bg-sky-600 text-white"
+                      : "bg-gray-200"
                       }`}
                   >
                     {pNum}

@@ -49,7 +49,6 @@ export const CategoryDropdown = () => {
 
   return (
     <div ref={dropdownRef}   className="relative inline-block">
-      {/* Trigger */}
       <button
         onClick={() => setOpen((p) => !p)}
         className="p-4 bg-gray-100 flex gap-6 items-center rounded hover:text-sky-600"
@@ -62,7 +61,6 @@ export const CategoryDropdown = () => {
       {open && (
         <div className="absolute top-full left-0 flex bg-white rounded-md p-2 shadow-lg z-50">
 
-          {/* LEFT: Categories */}
           <div className="flex flex-col">
             {categories.map((cat) => (
               <div

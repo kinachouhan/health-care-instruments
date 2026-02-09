@@ -2,8 +2,6 @@ export const About = () => {
   return (
     <div className="bg-[#faf7f3] min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-16">
-
-        {/* Header */}
         <div className="text-center mb-14">
           <h1 className="text-4xl font-bold text-gray-800">
             About Us
@@ -13,10 +11,8 @@ export const About = () => {
           </p>
         </div>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
-          {/* Image Section */}
           <div className="relative">
             <img
               src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5"
@@ -25,7 +21,6 @@ export const About = () => {
             />
           </div>
 
-          {/* Text Section */}
           <div className="bg-white rounded-2xl shadow-md p-8">
             <h2 className="text-2xl font-semibold text-sky-600 mb-4">
               Who We Are
@@ -57,7 +52,6 @@ export const About = () => {
           </div>
         </div>
 
-        {/* Mission Section */}
         <div className="mt-20 bg-white rounded-2xl shadow-md p-10 text-center">
           <h2 className="text-2xl font-semibold text-sky-600 mb-4">
             Our Mission
