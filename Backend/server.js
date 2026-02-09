@@ -8,8 +8,8 @@ import cookieParser from "cookie-parser"
 import productRoute from "./Routes/productRoute.js"
 import cartRoute from "./Routes/cartRoute.js"
 import wishListRoute from "./Routes/wishlistRoute.js"
-
-
+import reviewRoute from "./Routes/reviewRoute.js"
+import orderRoute from "./Routes/orderRoute.js"
 
 
 const app = express()
@@ -23,12 +23,12 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 
 
-
 app.use("/api/v1/user" , userRoute)
 app.use("/api/v1/product", productRoute)
 app.use("/api/v1/cart", cartRoute)
 app.use("/api/v1/wishlist", wishListRoute)
-
+app.use("/api/v1/review" , reviewRoute)
+app.use("/api/v1/order" , orderRoute)
 
 
 app.listen(PORT , ()=>{
