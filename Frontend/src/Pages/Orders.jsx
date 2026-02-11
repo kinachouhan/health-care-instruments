@@ -5,7 +5,7 @@ import { fetchOrders } from "../Redux/orderSlice";
 export const Orders = () => {
   const dispatch = useDispatch();
 
-  const { userOrders, loading, error } = useSelector(
+  const { orders, loading, error } = useSelector(
     (state) => state.order
   );
 
@@ -34,41 +34,35 @@ export const Orders = () => {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">My Orders</h1>
 
-        {userOrders.length === 0 ? (
+        {orders.length === 0 ? (
           <p className="text-gray-500 text-center">
             You have not placed any orders yet.
           </p>
         ) : (
           <div className="space-y-6">
-            {userOrders.map((order) => (
+            {orders.map((order) => (
               <div
                 key={order._id}
                 className="bg-white rounded-xl shadow p-6 space-y-4"
               >
-      
+     
                 <div className="flex flex-wrap justify-between items-center gap-4">
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Order ID
-                    </p>
+                    <p className="text-sm text-gray-500">Order ID</p>
                     <p className="font-semibold text-sm">
                       {order._id}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Order Status
-                    </p>
+                    <p className="text-sm text-gray-500">Order Status</p>
                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-700">
                       {order.status}
                     </span>
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Payment
-                    </p>
+                    <p className="text-sm text-gray-500">Payment</p>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         order.paymentStatus === "completed"
@@ -108,6 +102,7 @@ export const Orders = () => {
                     </div>
                   ))}
                 </div>
+
 
                 <div className="border-t pt-4 flex flex-wrap justify-between items-center gap-4">
                   <p className="text-sm text-gray-600">

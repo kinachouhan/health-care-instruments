@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-const API = import.meta.env.VITE_API_URL;
 
+const API = import.meta.env.VITE_API_URL;
 
 const initialState = {
   loading: false,
-  userOrders: [],
-  adminOrders: [],
+  orders: [],        
   error: null,
+  buyNowItem: null,
 };
 
 
@@ -22,9 +22,10 @@ export const fetchOrders = createAsyncThunk(
 
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
+
       return data.responseData;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
@@ -42,13 +43,13 @@ export const fetchAllOrdersAdmin = createAsyncThunk(
 
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
-      return data.responseData;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+
+      return data.responseData; 
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
-
 
 export const placeOrder = createAsyncThunk(
   "order/placeOrder",
@@ -58,14 +59,15 @@ export const placeOrder = createAsyncThunk(
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData),
+        body: JSON.stringify(orderData),
       });
 
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
+
       return data.responseData;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
@@ -87,9 +89,10 @@ export const updateOrderStatus = createAsyncThunk(
 
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
+
       return data.responseData;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
@@ -109,9 +112,10 @@ export const verifyUpiPayment = createAsyncThunk(
 
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
+
       return data.responseData;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
@@ -120,63 +124,62 @@ export const verifyUpiPayment = createAsyncThunk(
 const orderSlice = createSlice({
   name: "order",
   initialState,
-  reducers: {},
+  reducers: {
+    setBuyNowItem: (state, action) => {
+      state.buyNowItem = action.payload;
+    },
+    clearBuyNowItem: (state) => {
+      state.buyNowItem = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
+     
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.userOrders = action.payload;
+        state.orders = action.payload;
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
+   
       .addCase(fetchAllOrdersAdmin.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchAllOrdersAdmin.fulfilled, (state, action) => {
         state.loading = false;
-        state.adminOrders = action.payload;
+        state.orders = action.payload;
       })
       .addCase(fetchAllOrdersAdmin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-      .addCase(placeOrder.pending, (state) => {
-        state.loading = true;
-      })
+     
       .addCase(placeOrder.fulfilled, (state, action) => {
-        state.loading = false;
-        state.userOrders.unshift(action.payload);
-      })
-      .addCase(placeOrder.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+        state.orders.unshift(action.payload);
       })
 
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
         const updated = action.payload;
-
-        const updateList = (list) =>
-          list.map((o) => (o._id === updated._id ? updated : o));
-
-        state.userOrders = updateList(state.userOrders);
-        state.adminOrders = updateList(state.adminOrders);
+        state.orders = state.orders.map((o) =>
+          o._id === updated._id ? updated : o
+        );
       })
+
       .addCase(verifyUpiPayment.fulfilled, (state, action) => {
         const updated = action.payload;
-
-        state.adminOrders = state.adminOrders.map((o) =>
+        state.orders = state.orders.map((o) =>
           o._id === updated._id ? updated : o
         );
       });
   },
 });
 
+export const { setBuyNowItem, clearBuyNowItem } = orderSlice.actions;
 export default orderSlice.reducer;

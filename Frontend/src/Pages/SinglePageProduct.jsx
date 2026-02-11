@@ -6,6 +6,8 @@ import { getProductById } from "../Redux/product";
 import { addToCart, removeFromCart } from "../Redux/cartSlice";
 import { WishListHeart } from "../Components/WishListHeart";
 import toast from "react-hot-toast";
+import { setBuyNowItem } from "../Redux/orderSlice";
+
 
 export const SinglePageProduct = () => {
   const { id } = useParams();
@@ -40,8 +42,8 @@ export const SinglePageProduct = () => {
   if (loading)
     return (
       <div className="flex items-center justify-center h-screen w-full">
-  <div className="w-16 h-16 border-4 border-gray-300 border-t-sky-500 rounded-full animate-spin"></div>
-</div>
+        <div className="w-16 h-16 border-4 border-gray-300 border-t-sky-500 rounded-full animate-spin"></div>
+      </div>
 
     );
 
@@ -92,10 +94,10 @@ export const SinglePageProduct = () => {
 
   const inStock = product.availableStock > 0;
 
-   const discount =
-            originalPrice > sellingPrice
-              ? Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)
-              : 0;
+  const discount =
+    originalPrice > sellingPrice
+      ? Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)
+      : 0;
 
   return (
     <div className="bg-[#faf7f3] min-h-screen">
@@ -154,7 +156,7 @@ export const SinglePageProduct = () => {
                     ₹{originalPrice}
                   </span>
                 )}
-                 {discount > 0 && (
+                {discount > 0 && (
                   <span className="text-green-600 font-medium">
                     {discount}% off
                   </span>
@@ -197,17 +199,23 @@ export const SinglePageProduct = () => {
 
               <button
                 disabled={!inStock}
-                onClick={() => inStock && navigate("/checkout")}
+                onClick={() => {
+                  dispatch(
+                    setBuyNowItem({
+                      product,
+                      quantity: 1,
+                    })
+                  );
+                  navigate("/checkout");
+                }}
                 className={`flex-1 py-3 rounded-xl font-semibold border-2 transition-all duration-300
     ${inStock
                     ? "border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white"
                     : "border-gray-400 text-gray-400 cursor-not-allowed bg-gray-100"
-                  }
-  `}
+                  }`}
               >
                 Buy Now
               </button>
-
             </div>
           </div>
         </div>

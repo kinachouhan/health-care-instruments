@@ -1,6 +1,5 @@
 import { Order } from "../Models/orderModel.js";
-
-
+import { Product } from "../Models/productModel.js";
 
 export const placeOrder = async (req, res) => {
   try {
@@ -36,44 +35,70 @@ export const placeOrder = async (req, res) => {
   }
 };
 
-
 export const updateOrderStatus = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const { status } = req.body;
+  const { status } = req.body;
 
-    const order = await Order.findById(orderId);
+  const order = await Order.findById(req.params.orderId).populate(
+    "items.productId"
+  );
 
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found",
-      });
-    }
-
-    order.status = status;
-    if (order.paymentMethod === "COD") {
-      if (status === "Delivered") {
-        order.paymentStatus = "completed";
-      }
-    }
-
-    await order.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Order status updated",
-      responseData: order,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
+  if (!order) {
+    return res.status(404).json({
       success: false,
-      message: "Failed to update order",
+      message: "Order not found",
     });
   }
-};
 
+  if (order.status === "Delivered") {
+    return res.status(400).json({
+      success: false,
+      message: "Order already delivered",
+    });
+  }
+
+  if (
+    status === "Delivered" &&
+    order.paymentMethod === "UPI" &&
+    order.paymentStatus !== "completed"
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "UPI payment not verified yet",
+    });
+  }
+
+  order.status = status;
+
+  if (order.paymentMethod === "COD" && status === "Delivered") {
+    order.paymentStatus = "completed";
+  }
+
+
+  if (status === "Delivered") {
+    for (const item of order.items) {
+      const product = await Product.findById(item.productId);
+
+      if (!product) continue;
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for ${product.name}`,
+        });
+      }
+
+      product.stock -= item.quantity;
+      await product.save();
+    }
+  }
+
+  await order.save();
+
+  res.json({
+    success: true,
+    responseData: order,
+  });
+};
 
 
 export const getAllOrders = async (req, res) => {
@@ -121,12 +146,20 @@ export const getUserOrders = async (req, res) => {
 
 
 export const verifyUpiPayment = async (req, res) => {
-  const { orderId } = req.params;
+  const order = await Order.findById(req.params.orderId);
 
-  const order = await Order.findById(orderId);
+  if (!order) {
+    return res.status(404).json({
+      success: false,
+      message: "Order not found",
+    });
+  }
 
-  if (!order || order.paymentMethod !== "UPI") {
-    return res.status(400).json({ message: "Invalid order" });
+  if (order.paymentMethod !== "UPI") {
+    return res.status(400).json({
+      success: false,
+      message: "Not a UPI order",
+    });
   }
 
   order.paymentDetails.status = "verified";
@@ -136,6 +169,8 @@ export const verifyUpiPayment = async (req, res) => {
 
   res.json({
     success: true,
-    message: "UPI payment verified",
+    message: "UPI payment verified successfully",
+    responseData: order,
   });
 };
+

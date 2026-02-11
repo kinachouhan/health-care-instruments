@@ -1,19 +1,36 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { placeOrder } from "../Redux/orderSlice";
+import { placeOrder, clearBuyNowItem } from "../Redux/orderSlice";
 import { useNavigate } from "react-router-dom";
-
 
 export const Checkout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { items } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.user);
+  const { buyNowItem } = useSelector((state) => state.order);
+
+  /* ================= SNAPSHOT FIX ================= */
+  const [checkoutItems, setCheckoutItems] = useState([]);
+
+  useEffect(() => {
+    const sourceItems = buyNowItem
+      ? [{ product: buyNowItem.product, quantity: buyNowItem.quantity }]
+      : items;
+
+    setCheckoutItems(
+      sourceItems.map((item) => ({
+        product: { ...item.product },
+        quantity: item.quantity,
+      }))
+    );
+  }, []);
+  /* ================================================= */
 
   const [paymentMethod, setPaymentMethod] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
 
   const [address, setAddress] = useState({
     fullName: "",
@@ -41,11 +58,8 @@ export const Checkout = () => {
     }
   }, [user]);
 
-
   useEffect(() => {
-    if (paymentMethod !== "UPI") {
-      setTransactionId("");
-    }
+    if (paymentMethod !== "UPI") setTransactionId("");
   }, [paymentMethod]);
 
   const handleChange = (e) => {
@@ -53,7 +67,8 @@ export const Checkout = () => {
     setAddress((prev) => ({ ...prev, [name]: value }));
   };
 
-  const subtotal = items.reduce((acc, item) => {
+  /* ================= PRICE ================= */
+  const subtotal = checkoutItems.reduce((acc, item) => {
     const price =
       typeof item.product.price === "number"
         ? item.product.price
@@ -64,7 +79,7 @@ export const Checkout = () => {
   const shipping = subtotal > 1000 ? 0 : 80;
   const totalAmount = subtotal + shipping;
 
-
+  /* ================= VALIDATION ================= */
   const isAddressValid =
     address.fullName &&
     address.phone &&
@@ -78,12 +93,12 @@ export const Checkout = () => {
     paymentMethod &&
     (paymentMethod !== "UPI" || transactionId);
 
-
+  /* ================= PLACE ORDER ================= */
   const handlePlaceOrder = async () => {
     if (!canPlaceOrder) return;
 
     const orderData = {
-      items: items.map((item) => ({
+      items: checkoutItems.map((item) => ({
         productId: item.product._id,
         productName: item.product.productName,
         price:
@@ -91,125 +106,111 @@ export const Checkout = () => {
             ? item.product.price
             : item.product.price?.selling,
         quantity: item.quantity,
-        images: item.product.images,
+        images: Array.isArray(item.product.images)
+          ? item.product.images
+          : [],
       })),
       total: totalAmount,
       paymentMethod,
       paymentDetails:
         paymentMethod === "UPI"
           ? { transactionId, status: "pending" }
-          : undefined,
-      deliveryAddress: {
-        ...address,
-        email: user.email,
-      },
+          : null,
+      deliveryAddress: { ...address, email: user.email },
     };
 
-    const result = await dispatch(placeOrder({ orderData }));
-    
-
+    const result = await dispatch(placeOrder(orderData));
     if (placeOrder.fulfilled.match(result)) {
       setShowSuccessModal(true);
+      dispatch(clearBuyNowItem());
     }
   };
 
-
   return (
-    <div className="min-h-screen bg-[#faf7f3] py-10">
+    <div className="min-h-screen bg-gradient-to-br from-[#faf7f3] to-[#f1ece6] py-10">
       <div className="max-w-7xl mx-auto px-4">
-        <h1 className="text-3xl font-extrabold mb-10">Checkout</h1>
+        <h1 className="text-4xl font-extrabold mb-10 text-gray-800">
+          Checkout
+        </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="bg-white rounded-xl shadow-md p-6 space-y-8">
-
-            <section>
-              <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* LEFT */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* ADDRESS */}
+            <div className="bg-white rounded-2xl shadow p-6">
+              <h2 className="text-xl font-bold mb-6">Shipping Address</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <Input label="Full Name" name="fullName" value={address.fullName} onChange={handleChange} />
                 <Input label="Phone" name="phone" value={address.phone} onChange={handleChange} />
                 <Input label="Address Line 1" name="address1" value={address.address1} onChange={handleChange} className="md:col-span-2" />
-                <Input label="Address Line 2 (Optional)" name="address2" value={address.address2} onChange={handleChange} className="md:col-span-2" />
+                <Input label="Address Line 2" name="address2" value={address.address2} onChange={handleChange} className="md:col-span-2" />
                 <Input label="City" name="city" value={address.city} onChange={handleChange} />
                 <Input label="State" name="state" value={address.state} onChange={handleChange} />
                 <Input label="Zip Code" name="zipcode" value={address.zipcode} onChange={handleChange} />
                 <Input label="Country" name="country" value={address.country} onChange={handleChange} />
               </div>
-            </section>
+            </div>
 
+            {/* PAYMENT */}
+            <div className="bg-white rounded-2xl shadow p-6">
+              <h2 className="text-xl font-bold mb-6">Payment Method</h2>
 
-            <section>
-              <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+              <PaymentOption
+                checked={paymentMethod === "COD"}
+                onClick={() => setPaymentMethod("COD")}
+                title="Cash on Delivery"
+                desc="Pay when product arrives"
+              />
 
-              <label className="flex items-center gap-3 border p-4 rounded-lg cursor-pointer mb-3">
-                <input
-                  type="radio"
-                  checked={paymentMethod === "COD"}
-                  onChange={() => setPaymentMethod("COD")}
-                />
-                <span className="font-medium">Cash on Delivery</span>
-              </label>
-
-              <label className="flex items-center gap-3 border p-4 rounded-lg cursor-pointer">
-                <input
-                  type="radio"
-                  checked={paymentMethod === "UPI"}
-                  onChange={() => setPaymentMethod("UPI")}
-                />
-                <span className="font-medium">UPI (Google Pay / PhonePe)</span>
-              </label>
+              <PaymentOption
+                checked={paymentMethod === "UPI"}
+                onClick={() => setPaymentMethod("UPI")}
+                title="UPI Payment"
+                desc="Google Pay / PhonePe / Paytm"
+              />
 
               {paymentMethod === "UPI" && (
-                <div className="border rounded-lg p-4 bg-gray-50 mt-4 space-y-4">
-                  <p className="text-sm text-gray-600 text-center">
-                    Scan & Pay using any UPI app
-                  </p>
-
-                  <img
-                    src="/scanner.jpeg"
-                    alt="UPI QR"
-                    className="mx-auto w-40 h-40 object-contain"
-                  />
-
+                <div className="mt-4 border rounded-xl p-4 bg-gray-50">
+                  <img src="/scanner.jpeg" className="mx-auto w-40 mb-4" />
                   <Input
                     label="UPI Transaction ID"
-                    placeholder="Enter UPI reference number"
                     value={transactionId}
                     onChange={(e) => setTransactionId(e.target.value)}
                   />
-
-                  <p className="text-xs text-orange-600 text-center">
-                    Payment will be verified manually by admin
+                  <p className="text-xs text-orange-600 mt-2 text-center">
+                    Payment will be verified by admin
                   </p>
                 </div>
               )}
-            </section>
+            </div>
           </div>
 
-          {/* ================= RIGHT ================= */}
-          <div className="bg-white rounded-xl shadow-lg p-6 h-fit sticky top-20">
+          {/* RIGHT */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-20 h-fit">
             <h2 className="text-xl font-bold mb-6">Order Summary</h2>
 
             <div className="space-y-4 max-h-64 overflow-y-auto">
-              {items.map((item) => (
+              {checkoutItems.map((item) => (
                 <div key={item.product._id} className="flex gap-4">
                   <img
-                    src={item.product.images?.[0]}
-                    className="w-14 h-14 rounded object-contain"
+                    src={item.product.images?.[0] || "/placeholder.png"}
+                    className="w-16 h-16 object-contain rounded-lg border"
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold">{item.product.productName}</p>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                    <p className="font-semibold">{item.product.productName}</p>
+                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                   </div>
                   <p className="font-semibold">
-                    ₹{((item.product.price?.selling || item.product.price) * item.quantity).toFixed(2)}
+                    ₹{(
+                      (item.product.price?.selling || item.product.price) *
+                      item.quantity
+                    ).toFixed(2)}
                   </p>
                 </div>
               ))}
             </div>
 
-            <hr className="my-6" />
-
-            <div className="space-y-2 text-sm">
+            <div className="border-t mt-6 pt-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>₹{subtotal}</span>
@@ -227,68 +228,81 @@ export const Checkout = () => {
             <button
               disabled={!canPlaceOrder}
               onClick={handlePlaceOrder}
-              className={`w-full mt-6 py-3 rounded-xl font-semibold
-                ${canPlaceOrder
-                  ? "bg-sky-500 hover:bg-sky-600 text-white"
-                  : "bg-gray-300 cursor-not-allowed"
+              className={`w-full mt-6 py-3 rounded-xl font-semibold transition
+                ${
+                  canPlaceOrder
+                    ? "bg-sky-500 hover:bg-sky-600 text-white"
+                    : "bg-gray-300 cursor-not-allowed"
                 }`}
             >
               Place Order
             </button>
-
-            {showSuccessModal && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-2xl p-6 w-[90%] max-w-md relative text-center">
-                  <button
-                    onClick={() => {
-                      setShowSuccessModal(false);
-                      navigate("/");
-                    }}
-                    className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
-                  >
-                    ✕
-                  </button>
-                  <div className="flex justify-center mb-4">
-                    <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                      <span className="text-green-600 text-3xl">✔</span>
-                    </div>
-                  </div>
-
-                  <h2 className="text-xl font-bold text-green-600">
-                    Order Placed Successfully!
-                  </h2>
-
-                  <p className="text-sm text-gray-600 mt-2">
-                    Thank you for your order. You can track it from your orders page.
-                  </p>
-
-                  <button
-                    onClick={() => {
-                      setShowSuccessModal(false);
-                      navigate("/");
-                    }}
-                    className="mt-6 bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-lg"
-                  >
-                    Go to Home
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
+
+      {/* SUCCESS MODAL */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-[90%] max-w-md text-center relative">
+            <button
+              onClick={() => {
+                setShowSuccessModal(false);
+                navigate("/");
+              }}
+              className="absolute top-3 right-3 text-xl"
+            >
+              ✕
+            </button>
+
+            <div className="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
+              <span className="text-green-600 text-3xl">✔</span>
+            </div>
+
+            <h2 className="text-xl font-bold text-green-600">
+              Order Placed Successfully!
+            </h2>
+            <p className="text-sm text-gray-600 mt-2">
+              You can track your order from My Orders.
+            </p>
+
+            <button
+              onClick={() => navigate("/")}
+              className="mt-6 bg-sky-500 hover:bg-sky-600 text-white px-6 py-2 rounded-lg"
+            >
+              Go to Home
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
+
+
 const Input = ({ label, className = "", ...props }) => (
   <div className={className}>
-    <label className="block text-sm font-medium text-gray-600 mb-1">
+    <label className="block text-sm font-medium mb-1 text-gray-600">
       {label}
     </label>
     <input
       {...props}
-      className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-sky-500"
+      className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500"
     />
+  </div>
+);
+
+const PaymentOption = ({ checked, onClick, title, desc }) => (
+  <div
+    onClick={onClick}
+    className={`flex items-center gap-4 p-4 border rounded-xl cursor-pointer mb-3 transition
+      ${checked ? "border-sky-500 bg-sky-50" : "hover:border-gray-400"}`}
+  >
+    <input type="radio" checked={checked} readOnly />
+    <div>
+      <p className="font-semibold">{title}</p>
+      <p className="text-sm text-gray-500">{desc}</p>
+    </div>
   </div>
 );
