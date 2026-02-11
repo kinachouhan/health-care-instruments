@@ -1,13 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
 const API = import.meta.env.VITE_API_URL;
+
 
 const initialState = {
   loading: false,
-  userData: null,
-  orders: [],
+  userOrders: [],
+  adminOrders: [],
   error: null,
 };
+
 
 export const fetchOrders = createAsyncThunk(
   "order/fetchOrders",
@@ -16,9 +17,7 @@ export const fetchOrders = createAsyncThunk(
       const res = await fetch(`${API}/api/v1/order/orders`, {
         method: "GET",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
       const data = await res.json();
@@ -38,9 +37,28 @@ export const fetchAllOrdersAdmin = createAsyncThunk(
       const res = await fetch(`${API}/api/v1/order`, {
         method: "GET",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+      return data.responseData;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+
+export const placeOrder = createAsyncThunk(
+  "order/placeOrder",
+  async (orderData, thunkAPI) => {
+    try {
+      const res = await fetch(`${API}/api/v1/order/place-order`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
       });
 
       const data = await res.json();
@@ -57,14 +75,15 @@ export const updateOrderStatus = createAsyncThunk(
   "order/updateOrderStatus",
   async ({ orderId, status }, thunkAPI) => {
     try {
-      const res = await fetch(`${API}/api/v1/order/${orderId}/status`, {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status }),
-      });
+      const res = await fetch(
+        `${API}/api/v1/order/${orderId}/status`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        }
+      );
 
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
@@ -76,18 +95,17 @@ export const updateOrderStatus = createAsyncThunk(
 );
 
 
-export const placeOrder = createAsyncThunk(
-  "order/placeOrder",
-  async ({ orderData }, thunkAPI) => {
+export const verifyUpiPayment = createAsyncThunk(
+  "order/verifyUpiPayment",
+  async ({ orderId }, thunkAPI) => {
     try {
-      const res = await fetch(`${API}/api/v1/order/place-order`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
+      const res = await fetch(
+        `${API}/api/v1/order/${orderId}/verify-payment`,
+        {
+          method: "PUT",
+          credentials: "include",
+        }
+      );
 
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
@@ -98,7 +116,7 @@ export const placeOrder = createAsyncThunk(
   }
 );
 
-/* ================= SLICE ================= */
+
 const orderSlice = createSlice({
   name: "order",
   initialState,
@@ -111,7 +129,7 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.userOrders = action.payload;
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
@@ -120,31 +138,12 @@ const orderSlice = createSlice({
 
       .addCase(fetchAllOrdersAdmin.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchAllOrdersAdmin.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.adminOrders = action.payload;
       })
       .addCase(fetchAllOrdersAdmin.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      .addCase(updateOrderStatus.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(updateOrderStatus.fulfilled, (state, action) => {
-        state.loading = false;
-        const updatedOrder = action.payload;
-        const index = state.orders.findIndex(
-          (o) => o._id === updatedOrder._id
-        );
-        if (index !== -1) {
-          state.orders[index] = updatedOrder;
-        }
-      })
-      .addCase(updateOrderStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -154,11 +153,28 @@ const orderSlice = createSlice({
       })
       .addCase(placeOrder.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders.unshift(action.payload);
+        state.userOrders.unshift(action.payload);
       })
       .addCase(placeOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(updateOrderStatus.fulfilled, (state, action) => {
+        const updated = action.payload;
+
+        const updateList = (list) =>
+          list.map((o) => (o._id === updated._id ? updated : o));
+
+        state.userOrders = updateList(state.userOrders);
+        state.adminOrders = updateList(state.adminOrders);
+      })
+      .addCase(verifyUpiPayment.fulfilled, (state, action) => {
+        const updated = action.payload;
+
+        state.adminOrders = state.adminOrders.map((o) =>
+          o._id === updated._id ? updated : o
+        );
       });
   },
 });

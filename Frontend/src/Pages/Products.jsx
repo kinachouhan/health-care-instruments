@@ -6,17 +6,23 @@ import { FaStar } from "react-icons/fa";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import categoryData from "../Jsondata/category.json";
 import { CategoryScrollbar } from "../Components/CategoryScrollbar";
+import { addToCart, removeFromCart } from "../Redux/cartSlice";
+import toast from "react-hot-toast";
+import { WishListHeart } from "../Components/WishListHeart";
 
 export const Products = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { products = [], loading } = useSelector((state) => state.product);
+  const { products = [], singleProduct: product, loading } = useSelector((state) => state.product);
+
+  const { items: cartItems, cartLoading } = useSelector((state) => state.cart);
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
+
 
   const [openCategory, setOpenCategory] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   const [page, setPage] = useState(1);
-
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
   const subCategoryParam = searchParams.get("subcategory");
@@ -37,11 +43,9 @@ export const Products = () => {
     return { selling: 0, original: 0 };
   };
 
-
   useEffect(() => {
     dispatch(getAllProduct({ page: 1, limit: 500 }));
   }, [dispatch]);
-
 
   useEffect(() => {
     setSelectedCategories(categoryParam ? [categoryParam] : []);
@@ -78,13 +82,42 @@ export const Products = () => {
     });
   }, [products, selectedCategories, selectedSubCategories, price, searchQuery]);
 
-
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
   const paginatedProducts = filteredProducts.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
+
+
+
+  const handleClick = (product) => {
+    if (cartLoading) return;
+
+    const inCart = cartItems.some(
+      (item) => item.product?._id === product._id
+    );
+
+    if (inCart) {
+      dispatch(
+        removeFromCart({
+          productId: product._id,
+          isLoggedIn,
+        })
+      );
+      toast.success("Removed from Cart")
+    } else {
+      dispatch(
+        addToCart({
+          product,
+          quantity: 1,
+          isLoggedIn,
+        }),
+      );
+      toast.success("Added to Cart")
+    }
+  };
+
 
   return (
     <div className="bg-[#faf7f3] min-h-screen">
@@ -199,9 +232,10 @@ export const Products = () => {
                       onClick={() => navigate(`/product/${p._id}`)}
                       className="bg-white rounded-2xl shadow-md p-4 relative hover:scale-105 transition cursor-pointer"
                     >
-                      <button className="absolute top-4 right-4">
-                        <FiHeart />
-                      </button>
+
+                      <div className="absolute top-4 right-4">
+                        <WishListHeart product={p} />
+                      </div>
 
                       <div className="h-40 flex items-center justify-center">
                         <img
@@ -231,14 +265,21 @@ export const Products = () => {
                       </div>
 
                       <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClick(p);
+                        }}
                         disabled={!inStock}
                         className={`mt-3 w-full py-2 rounded-lg text-white ${inStock
                           ? "bg-sky-600 hover:bg-red-500"
                           : "bg-gray-400 cursor-not-allowed"
                           }`}
                       >
-                        Add to Cart
+                        {cartItems.some((item) => item.product?._id === p._id)
+                          ? "Remove from Cart"
+                          : "Add to Cart"}
                       </button>
+
                     </div>
                   );
                 })}

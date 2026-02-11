@@ -5,7 +5,7 @@ import { FaStar, FaTruck, FaShieldAlt, FaUndo } from "react-icons/fa";
 import { getProductById } from "../Redux/product";
 import { addToCart, removeFromCart } from "../Redux/cartSlice";
 import { WishListHeart } from "../Components/WishListHeart";
-import { fetchWishList } from "../Redux/wishListSlice";
+import toast from "react-hot-toast";
 
 export const SinglePageProduct = () => {
   const { id } = useParams();
@@ -66,6 +66,7 @@ export const SinglePageProduct = () => {
           isLoggedIn,
         })
       );
+      toast.success("Removed from Cart")
     } else {
       dispatch(
         addToCart({
@@ -74,6 +75,7 @@ export const SinglePageProduct = () => {
           isLoggedIn,
         })
       );
+      toast.success("Added to Cart")
     }
   };
 

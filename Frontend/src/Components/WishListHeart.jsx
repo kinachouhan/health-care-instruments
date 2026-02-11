@@ -1,6 +1,7 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishList, removeFromWishList } from "../Redux/wishListSlice";
+import toast from "react-hot-toast";
 
 export const WishListHeart = ({ product }) => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ export const WishListHeart = ({ product }) => {
           isLoggedIn,
         })
       );
+      toast.success("Removed from WishList")
     } else {
       dispatch(
         addToWishList({
@@ -30,6 +32,7 @@ export const WishListHeart = ({ product }) => {
           isLoggedIn,
         })
       );
+       toast.success("Added to WishList")
     }
   };
 

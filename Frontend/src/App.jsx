@@ -23,6 +23,7 @@ import { Profile } from './Pages/Profile'
 import { fetchCart } from './Redux/cartSlice'
 import { fetchWishList } from './Redux/wishListSlice'
 import { Checkout } from './Pages/Checkout'
+import { Orders } from './Pages/Orders'
 
 function App() {
 
@@ -62,7 +63,8 @@ function App() {
         { path: "/products", element: <Products/> },
         {path: "/product/:id" , element: <SinglePageProduct/> },
         {path: "/profile" , element: <Profile/> },
-        {path: "/checkout" , element: <Checkout/>}
+        {path: "/checkout" , element: <Checkout/>},
+        {path: "/orders" , element: <Orders/>}
       ],
     },
     {
@@ -92,7 +94,7 @@ function App() {
 
   return (
     <>
-       <Toaster position="top-center" />
+       <Toaster position="top-right" reverseOrder={false} />
       <RouterProvider router={router} />
     </>
   )

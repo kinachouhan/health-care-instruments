@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaTrashAlt, FaHeartBroken } from "react-icons/fa";
 import { removeFromWishList, clearWishList } from "../Redux/wishListSlice";
+import toast from "react-hot-toast";
 
 export const WishList = () => {
   const navigate = useNavigate();
@@ -62,7 +63,8 @@ export const WishList = () => {
                       productId: product._id,
                       isLoggedIn,
                     })
-                  );
+                  )
+                  toast.success("Removed from wishList")
                 }}
 
                 className="absolute top-3 right-3 z-10 p-2 text-red-500 rounded-full bg-white shadow hover:bg-red-500 hover:text-white transition"

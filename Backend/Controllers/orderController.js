@@ -1,24 +1,23 @@
 import { Order } from "../Models/orderModel.js";
 
 
+
 export const placeOrder = async (req, res) => {
   try {
-    const orderData = req.body;
+    const orderData = req.body.orderData || req.body; 
 
-    if (!orderData || !orderData.items || orderData.items.length === 0) {
+    if (!orderData.items || orderData.items.length === 0) {
       return res.status(400).json({
         success: false,
         message: "Order items are required",
       });
     }
 
-    const paymentStatus =
-      orderData.paymentMethod === "COD" ? "pending" : "completed";
-
     const newOrder = new Order({
       ...orderData,
       userId: req.user._id,
-      paymentStatus,
+      paymentStatus:
+        orderData.paymentMethod === "COD" ? "pending" : "pending",
     });
 
     await newOrder.save();
@@ -37,6 +36,7 @@ export const placeOrder = async (req, res) => {
   }
 };
 
+
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -52,19 +52,17 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     order.status = status;
-
     if (order.paymentMethod === "COD") {
-      order.paymentStatus =
-        status === "Delivered" ? "completed" : "pending";
-    } else {
-      order.paymentStatus = "completed";
+      if (status === "Delivered") {
+        order.paymentStatus = "completed";
+      }
     }
 
     await order.save();
 
     res.status(200).json({
       success: true,
-      message: "Updated Order Status",
+      message: "Order status updated",
       responseData: order,
     });
   } catch (error) {
@@ -75,6 +73,7 @@ export const updateOrderStatus = async (req, res) => {
     });
   }
 };
+
 
 
 export const getAllOrders = async (req, res) => {
@@ -118,4 +117,25 @@ export const getUserOrders = async (req, res) => {
       message: "Failed to fetch user orders",
     });
   }
+};
+
+
+export const verifyUpiPayment = async (req, res) => {
+  const { orderId } = req.params;
+
+  const order = await Order.findById(orderId);
+
+  if (!order || order.paymentMethod !== "UPI") {
+    return res.status(400).json({ message: "Invalid order" });
+  }
+
+  order.paymentDetails.status = "verified";
+  order.paymentStatus = "completed";
+
+  await order.save();
+
+  res.json({
+    success: true,
+    message: "UPI payment verified",
+  });
 };

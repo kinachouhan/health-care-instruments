@@ -36,6 +36,20 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
+    paymentDetails: {
+      transactionId: {
+        type: String,
+        required: function () {
+          return this.paymentMethod === "UPI";
+        },
+      },
+      status: {
+        type: String,
+        enum: ["pending", "verified"],
+        default: "pending",
+      },
+    },
+
     paymentStatus: {
       type: String,
       enum: ["pending", "completed", "failed"],
@@ -55,7 +69,6 @@ const orderSchema = new mongoose.Schema(
       default: "Order-Placed",
     },
 
-  
     deliveryAddress: {
       fullName: String,
       address1: String,
