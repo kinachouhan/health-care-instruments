@@ -67,7 +67,7 @@ export const WishList = () => {
                   toast.success("Removed from wishList")
                 }}
 
-                className="absolute top-3 right-3 z-10 p-2 text-red-500 rounded-full bg-white shadow hover:bg-red-500 hover:text-white transition"
+                className="absolute top-3 right-3 z-1 p-2 text-red-500 rounded-full bg-white shadow hover:bg-red-500 hover:text-white transition"
               >
                 <FaTrashAlt className="text-sm" />
               </button>

@@ -4,14 +4,16 @@ import { fetchOrders } from "../Redux/orderSlice";
 
 export const Orders = () => {
   const dispatch = useDispatch();
-
-  const { orders, loading, error } = useSelector(
-    (state) => state.order
-  );
+  const { userOrders, loading, error } = useSelector((state) => state.order);
+  const { user, loading: authLoading } = useSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(fetchOrders());
-  }, [dispatch]);
+    if (!authLoading && user?._id) {
+      dispatch(fetchOrders());
+    }
+  }, [dispatch, user, authLoading]);
+
+
 
   if (loading) {
     return (
@@ -32,20 +34,20 @@ export const Orders = () => {
   return (
     <div className="min-h-screen bg-[#faf7f3] py-10 px-4">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">My Orders</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center">My Orders</h1>
 
-        {orders.length === 0 ? (
-          <p className="text-gray-500 text-center">
+        {userOrders.length === 0 ? (
+          <p className="text-gray-500 text-center ">
             You have not placed any orders yet.
           </p>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => (
+            {userOrders.map((order) => (
               <div
                 key={order._id}
                 className="bg-white rounded-xl shadow p-6 space-y-4"
               >
-     
+
                 <div className="flex flex-wrap justify-between items-center gap-4">
                   <div>
                     <p className="text-sm text-gray-500">Order ID</p>
@@ -64,11 +66,10 @@ export const Orders = () => {
                   <div>
                     <p className="text-sm text-gray-500">Payment</p>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.paymentStatus === "completed"
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${order.paymentStatus === "completed"
                           ? "bg-green-100 text-green-700"
                           : "bg-yellow-100 text-yellow-700"
-                      }`}
+                        }`}
                     >
                       {order.paymentStatus}
                     </span>

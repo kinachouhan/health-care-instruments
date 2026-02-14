@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { removeFromCart, addToCart, clearCart } from "../Redux/cartSlice.js";
 import { MdDelete } from "react-icons/md";
 
-
 const getPrices = (price) => {
   if (typeof price === "number") {
     return { selling: price, original: price };
@@ -20,25 +19,23 @@ const getPrices = (price) => {
 };
 
 export const Cart = () => {
-  const { items, cartLoading } = useSelector((state) => state.cart);
+  const { items = [], cartLoading } = useSelector((state) => state.cart);
+  const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  
+  const validItems = items.filter((item) => item?.product);
 
-  const isLoggedIn = useSelector((state) => state.user.isAuthenticated)
-
-  const subtotal = items.reduce((total, item) => {
+  const subtotal = validItems.reduce((total, item) => {
     const { selling } = getPrices(item.product?.price);
     return total + selling * item.quantity;
   }, 0);
 
-   const shipping = subtotal > 1000 ? 0 : 80;
+  const shipping = subtotal > 1000 ? 0 : subtotal === 0 ? 0 : 80;
+  const totalPrice = subtotal + shipping;
 
-   const totalPrice = subtotal + shipping
-
-
-  if (!cartLoading && (!items || items.length === 0)) {
+  if (!cartLoading && validItems.length === 0) {
     return (
       <div className="max-w-7xl mx-auto my-40">
         <h1 className="text-center text-gray-600 text-3xl py-10">
@@ -57,15 +54,16 @@ export const Cart = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4">
       <div className="border-t border-gray-200 py-8 flex flex-col">
         <h1 className="text-gray-500 font-semibold text-xl mb-8">
           My <span className="text-black">CART</span>
         </h1>
 
         <div className="flex flex-col gap-6">
-          {items.map((item, index) => {
-            const { selling, original } = getPrices(item.product?.price);
+          {validItems.map((item, index) => {
+            const { selling, original } = getPrices(item.product.price);
+
             const discount =
               original > selling
                 ? Math.round(((original - selling) / original) * 100)
@@ -73,11 +71,10 @@ export const Cart = () => {
 
             return (
               <div
-              key={`${item.product._id}-${index}`}
-          
+                key={item.product?._id || index}
                 className="flex flex-col sm:flex-row sm:justify-between gap-4 border border-gray-300 p-4 rounded"
               >
-
+     
                 <div className="flex gap-4">
                   <img
                     className="h-24 w-24 object-cover rounded"
@@ -87,7 +84,7 @@ export const Cart = () => {
 
                   <div className="flex flex-col gap-2">
                     <h1 className="font-semibold">
-                      {item.product?.productName || "Deleted Product"}
+                      {item.product?.productName}
                     </h1>
 
                     <div className="flex items-center gap-2">
@@ -108,6 +105,7 @@ export const Cart = () => {
                   </div>
                 </div>
 
+            
                 <div className="flex justify-between sm:justify-end items-center gap-6">
                   <div className="flex items-center gap-3">
                     <button
@@ -135,8 +133,8 @@ export const Cart = () => {
                       -
                     </button>
 
-                    <span>{item.quantity}</span>
 
+                    <span>{item.quantity}</span>
                     <button
                       className="border px-3 py-1"
                       disabled={cartLoading}
@@ -145,7 +143,7 @@ export const Cart = () => {
                           addToCart({
                             product: item.product,
                             quantity: 1,
-                            isLoggedIn
+                            isLoggedIn,
                           })
                         )
                       }
@@ -154,12 +152,16 @@ export const Cart = () => {
                     </button>
                   </div>
 
+        
                   <button
                     className="text-2xl text-red-600"
                     disabled={cartLoading}
                     onClick={() =>
                       dispatch(
-                        removeFromCart({ productId: item.product._id, isLoggedIn })
+                        removeFromCart({
+                          productId: item.product._id,
+                          isLoggedIn,
+                        })
                       )
                     }
                   >
@@ -171,7 +173,6 @@ export const Cart = () => {
           })}
         </div>
 
-
         <div className="flex justify-end my-10 border-t border-gray-400 py-12">
           <div className="w-full sm:w-auto flex flex-col gap-4">
             <h1 className="font-bold text-3xl">Cart Totals</h1>
@@ -181,12 +182,18 @@ export const Cart = () => {
                 Subtotal: <span>₹{subtotal.toFixed(2)}</span>
               </h1>
 
-              <h1 className="font-semibold flex justify-between">Shipping:<span>{shipping === 0 ? "Free" : `₹${shipping}`}</span></h1>
-              <p className="text-gray-500 text-sm">Free Delivery on all purchases above ₹1000</p>
+              <h1 className="font-semibold flex justify-between">
+                Shipping:
+                <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
+              </h1>
+
+              <p className="text-gray-500 text-sm">
+                Free Delivery on all purchases above ₹1000
+              </p>
 
               <h1 className="flex justify-between font-semibold border-t py-2">
                 Total:
-                <span className="text-green-700 text-semibold">
+                <span className="text-green-700">
                   ₹{totalPrice.toFixed(2)}
                 </span>
               </h1>
@@ -202,6 +209,7 @@ export const Cart = () => {
               </button>
 
               <button
+                disabled={subtotal === 0}
                 onClick={() => navigate("/checkout")}
                 className="bg-sky-600 hover:bg-sky-800 text-white px-6 py-2"
               >

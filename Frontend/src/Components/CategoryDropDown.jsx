@@ -48,7 +48,7 @@ export const CategoryDropdown = () => {
 
 
   return (
-    <div ref={dropdownRef}   className="relative inline-block">
+    <div ref={dropdownRef}   className="relative inline-block ">
       <button
         onClick={() => setOpen((p) => !p)}
         className="p-4 bg-gray-100 flex gap-6 items-center rounded hover:text-sky-600"
@@ -59,9 +59,9 @@ export const CategoryDropdown = () => {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 flex bg-white rounded-md p-2 shadow-lg z-50">
+        <div className="absolute top-full left-0 flex bg-white rounded-md p-2 shadow-lg z-60 ">
 
-          <div className="flex flex-col">
+          <div className="flex flex-col bg-white">
             {categories.map((cat) => (
               <div
                 key={cat.name}
@@ -84,7 +84,7 @@ export const CategoryDropdown = () => {
           </div>
 
     
-          <div className="w-[800px]">
+          <div className="w-[800px] bg-white">
             <div className="flex items-center px-8 py-4 gap-2">
               <h3 className="text-2xl font-semibold text-sky-600">
                 {hoveredCategory?.toUpperCase()}

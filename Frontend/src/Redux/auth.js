@@ -178,25 +178,25 @@ export const login = createAsyncThunk(
 
 
 export const logout = createAsyncThunk(
-  "auth/logout",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${API}/api/v1/user/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
+      "auth/logout",
+      async (_, { rejectWithValue }) => {
+            try {
+                  const res = await fetch(`${API}/api/v1/user/logout`, {
+                        method: "POST",
+                        credentials: "include",
+                  });
 
-      const data = await res.json();
+                  const data = await res.json();
 
-      if (!res.ok || !data.success) {
-        return rejectWithValue(data.message || "Logout failed");
+                  if (!res.ok || !data.success) {
+                        return rejectWithValue(data.message || "Logout failed");
+                  }
+
+                  return data;
+            } catch (error) {
+                  return rejectWithValue(error.message);
+            }
       }
-
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
 );
 
 
@@ -274,6 +274,7 @@ const authSlice = createSlice({
                         state.user = null;
                         state.isAuthenticated = false;
                         state.loading = false;
+                        state.error = null;
                   })
                   .addCase(logout.rejected, (state, action) => {
                         state.loading = false;
@@ -287,9 +288,10 @@ const authSlice = createSlice({
                         state.user = action.payload;
                         state.isAuthenticated = true;
                   })
-                  .addCase(getMe.rejected, (state, action) => {
-                        state.loading = false,
-                              state.isAuthenticated = false
+                  .addCase(getMe.rejected, (state) => {
+                        state.loading = false;
+                        state.user = null;            
+                        state.isAuthenticated = false;  
                   })
                   .addCase(updateProfile.pending, (state) => {
                         state.loading = true;

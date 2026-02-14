@@ -1,4 +1,3 @@
-
 export const getGuestCart = () => {
   try {
     const cart = localStorage.getItem("cart");
@@ -11,45 +10,46 @@ export const getGuestCart = () => {
 export const addToGuestCart = ({ product, quantity = 1 }) => {
   const cart = getGuestCart();
 
-  const existing = cart.find(
-    (item) => item.product._id === product._id
+  const existingIndex = cart.findIndex(
+    (item) => item?.product?._id === product?._id
   );
 
-  if (existing) {
-    existing.quantity += quantity;
-
-    if (existing.quantity <= 0) {
-      const filtered = cart.filter(
-        (item) => item.product._id !== product._id
-      );
-      localStorage.setItem("cart", JSON.stringify(filtered));
-      return;
+  if (existingIndex !== -1) {
+    cart[existingIndex].quantity += quantity;
+    if (cart[existingIndex].quantity <= 0) {
+      cart.splice(existingIndex, 1);
     }
   } else {
-    cart.push({
-      product: {
-        _id: product._id,
-        productName: product.productName,
-        price: product.price,
-        images: product.images,
-      },
-      quantity,
-    });
+   
+    if (quantity > 0) {
+      cart.push({
+        product: {
+          _id: product._id,
+          productName: product.productName,
+          price: product.price,
+          images: product.images,
+        },
+        quantity,
+      });
+    }
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
-};
 
+  return cart; 
+};
 
 export const removeFromGuestCart = (productId) => {
   const cart = getGuestCart().filter(
-    (item) => item.product._id !== productId
+    (item) => item?.product?._id !== productId
   );
 
   localStorage.setItem("cart", JSON.stringify(cart));
-};
 
+  return cart; 
+};
 
 export const clearGuestCart = () => {
   localStorage.removeItem("cart");
+  return [];
 };

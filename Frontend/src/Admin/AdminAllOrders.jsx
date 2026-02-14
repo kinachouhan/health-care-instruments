@@ -17,14 +17,19 @@ const STATUS_OPTIONS = [
 
 export const AdminAllOrders = () => {
   const dispatch = useDispatch();
-  const { orders, loading } = useSelector((state) => state.order);
+  const { adminOrders, loading } = useSelector((state) => state.order);
 
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
+  const { user, loading: authLoading } = useSelector((state) => state.user);
+
   useEffect(() => {
-    dispatch(fetchAllOrdersAdmin());
-  }, [dispatch]);
+    if (!authLoading && user?.role === "admin") {
+      dispatch(fetchAllOrdersAdmin());
+    }
+  }, [dispatch, user, authLoading]);
+
 
   const handleVerifyClick = (orderId) => {
     setSelectedOrderId(orderId);
@@ -52,10 +57,10 @@ export const AdminAllOrders = () => {
           Admin · All Orders
         </h1>
 
-        {orders.length === 0 ? (
+        {adminOrders.length === 0 ? (
           <p className="text-gray-500">No orders found.</p>
         ) : (
-          orders.map((order) => {
+          adminOrders.map((order) => {
             const isUpiPending =
               order.paymentMethod === "UPI" &&
               order.paymentStatus === "pending";
@@ -65,7 +70,6 @@ export const AdminAllOrders = () => {
                 key={order._id}
                 className="bg-white rounded-2xl shadow-md p-6 mb-6 border"
               >
-                {/* HEADER */}
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                   <div>
                     <p className="text-xs text-gray-500">
@@ -84,18 +88,16 @@ export const AdminAllOrders = () => {
                       ₹{order.total}
                     </p>
                     <span
-                      className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.paymentStatus === "completed"
+                      className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold ${order.paymentStatus === "completed"
                           ? "bg-green-100 text-green-700"
                           : "bg-yellow-100 text-yellow-700"
-                      }`}
+                        }`}
                     >
                       {order.paymentStatus}
                     </span>
                   </div>
                 </div>
 
-                {/* ITEMS */}
                 <div className="mt-5 bg-gray-50 rounded-xl p-4 space-y-2">
                   {order.items.map((item) => (
                     <div
@@ -112,7 +114,6 @@ export const AdminAllOrders = () => {
                   ))}
                 </div>
 
-                {/* PAYMENT */}
                 <div className="mt-5 flex flex-wrap gap-4 items-center">
                   <div className="text-sm">
                     <span className="text-gray-500">Payment:</span>{" "}
@@ -131,7 +132,7 @@ export const AdminAllOrders = () => {
                   )}
                 </div>
 
-                {/* STATUS */}
+       
                 <div className="mt-6 flex justify-between items-center">
                   <span className="text-sm font-semibold text-gray-700">
                     Order Status
@@ -169,7 +170,6 @@ export const AdminAllOrders = () => {
         )}
       </div>
 
-      {/* VERIFY MODAL */}
       {showVerifyModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-[90%] max-w-sm text-center shadow-xl">

@@ -1,13 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Logo } from "../Components/Logo";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../Redux/auth";
 
 import {
   mergeWishList,
   fetchWishList,
 } from "../Redux/wishListSlice";
+
 import {
   getGuestWishList,
   clearGuestWishList,
@@ -22,18 +23,20 @@ export const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
- 
+  const { user, isAuthenticated } = useSelector((state) => state.user);
 
   const handleInput = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const result = await dispatch(login(formData));
 
     if (!login.fulfilled.match(result)) {
@@ -53,16 +56,17 @@ export const Login = () => {
     }
 
     await dispatch(fetchWishList(true));
-
-      const user = result.payload;
-
-    if (user.role === "admin") {
-      navigate("/admin");
-    } else {
-      navigate("/");
-    }
   };
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -87,6 +91,7 @@ export const Login = () => {
             value={formData.email}
             onChange={handleInput}
             className="border px-4 py-2 rounded-lg"
+            required
           />
 
           <input
@@ -96,9 +101,13 @@ export const Login = () => {
             value={formData.password}
             onChange={handleInput}
             className="border px-4 py-2 rounded-lg"
+            required
           />
 
-          <button className="bg-blue-600 text-white py-2 rounded-lg">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          >
             Login
           </button>
         </form>

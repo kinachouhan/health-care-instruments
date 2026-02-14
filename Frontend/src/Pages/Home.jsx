@@ -6,23 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllProduct } from "../Redux/product";
 import { CategorySection } from "../Components/CategorySection";
 
-
-
 export const Home = () => {
-
   const dispatch = useDispatch();
   const { products = [] } = useSelector((state) => state.product);
-
-
 
   useEffect(() => {
     if (!products.length) {
       dispatch(getAllProduct({ page: 1, limit: 500 }));
     }
   }, [dispatch, products.length]);
-
-
-
 
   const productsByCategory = useMemo(() => {
     const map = {};

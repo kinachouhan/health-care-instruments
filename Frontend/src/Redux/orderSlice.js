@@ -4,7 +4,8 @@ const API = import.meta.env.VITE_API_URL;
 
 const initialState = {
   loading: false,
-  orders: [],        
+  userOrders: [],
+  adminOrders: [],
   error: null,
   buyNowItem: null,
 };
@@ -44,12 +45,13 @@ export const fetchAllOrdersAdmin = createAsyncThunk(
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
 
-      return data.responseData; 
+      return data.responseData;
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
+
 
 export const placeOrder = createAsyncThunk(
   "order/placeOrder",
@@ -97,7 +99,6 @@ export const updateOrderStatus = createAsyncThunk(
   }
 );
 
-
 export const verifyUpiPayment = createAsyncThunk(
   "order/verifyUpiPayment",
   async ({ orderId }, thunkAPI) => {
@@ -134,47 +135,56 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-     
       .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.userOrders = action.payload;
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-   
+  
       .addCase(fetchAllOrdersAdmin.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchAllOrdersAdmin.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.adminOrders = action.payload;
       })
       .addCase(fetchAllOrdersAdmin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
-     
+   
       .addCase(placeOrder.fulfilled, (state, action) => {
-        state.orders.unshift(action.payload);
+        state.userOrders.unshift(action.payload);
       })
 
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
         const updated = action.payload;
-        state.orders = state.orders.map((o) =>
+
+        state.adminOrders = state.adminOrders.map((o) =>
+          o._id === updated._id ? updated : o
+        );
+
+        state.userOrders = state.userOrders.map((o) =>
           o._id === updated._id ? updated : o
         );
       })
 
       .addCase(verifyUpiPayment.fulfilled, (state, action) => {
         const updated = action.payload;
-        state.orders = state.orders.map((o) =>
+
+        state.adminOrders = state.adminOrders.map((o) =>
+          o._id === updated._id ? updated : o
+        );
+
+        state.userOrders = state.userOrders.map((o) =>
           o._id === updated._id ? updated : o
         );
       });
