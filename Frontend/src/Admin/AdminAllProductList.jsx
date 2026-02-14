@@ -85,6 +85,7 @@ export const AdminAllProductList = () => {
             <tr>
               <th className="p-2 border">S.No.</th>
               <th className="p-2 border">Name</th>
+               <th className="p-2 border">Brand</th> 
               <th className="p-2 border">Category</th>
               <th className="p-2 border">Subcategory</th>
               <th className="p-2 border">Price</th>
@@ -108,6 +109,7 @@ export const AdminAllProductList = () => {
                   </td>
 
                   <td className="p-2 border">{product.productName}</td>
+                  <td className="p-2 border">{product.brand || "-"}</td>  
                   <td className="p-2 border">{product.category}</td>
                   <td className="p-2 border">{product.subCategory}</td>
 

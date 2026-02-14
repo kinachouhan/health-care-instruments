@@ -4,6 +4,8 @@ const productSchema = new mongoose.Schema(
   {
     productName: { type: String, required: true, trim: true },
     description: { type: String, required: true },
+    brand: { type: String, trim: true }, 
+    productGroupId: { type: String},
     category: { type: String, required: true },
     subCategory: { type: String, required: true },
     totalStock: { type: Number, required: true, min: 0 },

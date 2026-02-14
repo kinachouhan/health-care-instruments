@@ -18,7 +18,7 @@ export const Products = () => {
   const { items: cartItems, cartLoading } = useSelector((state) => state.cart);
   const isLoggedIn = useSelector((state) => state.user.isAuthenticated);
 
-
+  const [selectedBrands, setSelectedBrands] = useState([]);
   const [openCategory, setOpenCategory] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
@@ -60,6 +60,11 @@ export const Products = () => {
   const [price, setPrice] = useState(maxPrice);
   useEffect(() => setPrice(maxPrice), [maxPrice]);
 
+  const allBrands = useMemo(() => {
+    const brands = products.map((p) => p.brand).filter(Boolean);
+    return [...new Set(brands)];
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
       const { selling } = getPrices(p.price);
@@ -72,15 +77,19 @@ export const Products = () => {
         selectedSubCategories.length === 0 ||
         selectedSubCategories.includes(p.subCategory);
 
+      const brandOk =
+        selectedBrands.length === 0 || selectedBrands.includes(p.brand);
+
       const priceOk = selling <= price;
 
       const searchOk =
         !searchQuery ||
         p.productName.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return catOk && subOk && priceOk && searchOk;
+      return catOk && subOk && brandOk && priceOk && searchOk;
     });
-  }, [products, selectedCategories, selectedSubCategories, price, searchQuery]);
+  }, [products, selectedCategories, selectedSubCategories, selectedBrands, price, searchQuery]);
+
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
@@ -203,6 +212,29 @@ export const Products = () => {
                   )}
               </div>
             ))}
+
+            <h3 className="font-semibold mt-8 mb-3">Filter By Brand</h3>
+            {allBrands.length === 0 ? (
+              <p className="text-sm text-gray-500">No brands available</p>
+            ) : (
+              allBrands.map((brand) => (
+                <label key={brand} className="flex gap-2 text-sm mb-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() =>
+                      setSelectedBrands((prev) =>
+                        prev.includes(brand)
+                          ? prev.filter((b) => b !== brand)
+                          : [...prev, brand]
+                      )
+                    }
+                  />
+                  {brand}
+                </label>
+              ))
+            )}
+
           </aside>
 
           <section className="md:col-span-3">

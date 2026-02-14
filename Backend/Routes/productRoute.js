@@ -1,5 +1,5 @@
 import express from "express"
-import { addProduct, deleteProduct, getAllProducts, getProduct , updateProduct } from "../Controllers/productController.js";
+import { addProduct, deleteProduct, getAllProducts, getProduct , updateProduct , getProductsByBrand } from "../Controllers/productController.js";
 import { upload} from "../Middleware/multerMiddleware.js";
 
 
@@ -11,7 +11,7 @@ router.get("/", getAllProducts);
 router.delete("/delete/:id", deleteProduct);
 
 router.get("/:id", getProduct);
-
+router.get("/brand" , getProductsByBrand)
 
 
 router.put(

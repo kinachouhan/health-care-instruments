@@ -59,11 +59,11 @@ export const Header = () => {
     navigate(`/products?search=${encodeURIComponent(searchText)}`);
   };
 
-  const safeItems = Array.isArray(items) ? items : [];
-  const cartCount = safeItems.reduce(
-    (total, item) => total + (item.quantity || 0),
-    0
-  );
+ const safeItems = Array.isArray(items) ? items : [];
+const cartCount = safeItems.length > 0 
+  ? safeItems.reduce((total, item) => total + (item.quantity || 1), 0)
+  : 0;
+
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-md">
@@ -91,7 +91,6 @@ export const Header = () => {
             </div>
           </div>
 
-          {/* Icons */}
           <div className="flex items-center gap-3">
             <button
               onClick={() =>

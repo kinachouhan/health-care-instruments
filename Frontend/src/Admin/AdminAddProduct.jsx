@@ -1,22 +1,18 @@
 import categories from "../Jsondata/category.json";
 import { useState, useEffect } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { addProduct } from "../Redux/product";
+import { addProduct, updateProduct, getProductById } from "../Redux/product";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProductById, updateProduct } from "../Redux/product";
 
 export const AdminAddProduct = () => {
   const [images, setImages] = useState([null, null, null, null]);
   const [previews, setPreviews] = useState([null, null, null, null]);
 
-  const { loading } = useSelector((state) => state.product);
-  const { singleProduct } = useSelector((state) => state.product);
-
+  const { loading, singleProduct } = useSelector((state) => state.product);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { id } = useParams();
   const isEditMode = Boolean(id);
 
@@ -28,8 +24,9 @@ export const AdminAddProduct = () => {
     category: "",
     subCategory: "",
     stock: "",
+    brand: "",
+    productGroupId: "", // ✅ new field for multiple brands
   });
-
 
   useEffect(() => {
     if (isEditMode) {
@@ -42,11 +39,13 @@ export const AdminAddProduct = () => {
       setProductDetails({
         productName: singleProduct.productName || "",
         description: singleProduct.description || "",
+        brand: singleProduct.brand || "",
         originalPrice: singleProduct.price?.original || "",
         sellingPrice: singleProduct.price?.selling || "",
         category: singleProduct.category || "",
         subCategory: singleProduct.subCategory || "",
         stock: "",
+        productGroupId: singleProduct.productGroupId || "",
       });
 
       setPreviews(singleProduct.images || []);
@@ -56,7 +55,6 @@ export const AdminAddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setProductDetails((prev) => ({
       ...prev,
       [name]: value,
@@ -86,74 +84,83 @@ export const AdminAddProduct = () => {
   );
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (
-      !productDetails.productName ||
-      !productDetails.description ||
-      !productDetails.category ||
-      !productDetails.subCategory ||
-      !productDetails.originalPrice ||
-      !productDetails.sellingPrice
-    ) {
-      toast.error("All fields are required");
-      return;
+  e.preventDefault();
+
+  // Validate required fields only
+  if (
+    !productDetails.productName ||
+    !productDetails.description ||
+    !productDetails.category ||
+    !productDetails.subCategory ||
+    !productDetails.originalPrice ||
+    !productDetails.sellingPrice
+  ) {
+    toast.error("Please fill all required fields");
+    return;
+  }
+
+  if (
+    Number(productDetails.sellingPrice) >
+    Number(productDetails.originalPrice)
+  ) {
+    toast.error("Selling price cannot be greater than original price");
+    return;
+  }
+
+  if (!isEditMode && images.every((img) => img === null)) {
+    toast.error("Please upload at least one product image");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("productName", productDetails.productName);
+  formData.append("description", productDetails.description);
+
+  
+  if (productDetails.brand) formData.append("brand", productDetails.brand);
+  if (productDetails.productGroupId)
+    formData.append("productGroupId", productDetails.productGroupId);
+
+  formData.append("originalPrice", Number(productDetails.originalPrice));
+  formData.append("sellingPrice", Number(productDetails.sellingPrice));
+  formData.append("category", productDetails.category);
+  formData.append("subCategory", productDetails.subCategory);
+
+  if (productDetails.stock) {
+    formData.append("stock", Number(productDetails.stock));
+  }
+
+  images.forEach((img) => {
+    if (img) formData.append("images", img);
+  });
+
+  try {
+    if (isEditMode) {
+      await dispatch(updateProduct({ id, formData })).unwrap();
+      toast.success("Product updated successfully");
+    } else {
+      await dispatch(addProduct(formData)).unwrap();
+      toast.success("Product added successfully");
     }
 
-    if (
-      Number(productDetails.sellingPrice) >
-      Number(productDetails.originalPrice)
-    ) {
-      toast.error("Selling price cannot be greater than original price");
-      return;
-    }
-
-    if (!isEditMode && images.every((img) => img === null)) {
-      toast.error("Please upload at least one product image");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("productName", productDetails.productName);
-    formData.append("description", productDetails.description);
-    formData.append("originalPrice", Number(productDetails.originalPrice));
-    formData.append("sellingPrice", Number(productDetails.sellingPrice));
-    formData.append("category", productDetails.category);
-    formData.append("subCategory", productDetails.subCategory);
-
-    if (productDetails.stock) {
-      formData.append("stock", Number(productDetails.stock));
-    }
-
-    images.forEach((img) => {
-      if (img) formData.append("images", img);
+    // Reset form
+    setProductDetails({
+      productName: "",
+      description: "",
+      originalPrice: "",
+      sellingPrice: "",
+      category: "",
+      subCategory: "",
+      stock: "",
+      brand: "",
+      productGroupId: "",
     });
-
-    try {
-      if (isEditMode) {
-        await dispatch(updateProduct({ id, formData })).unwrap();
-        toast.success("Product updated successfully");
-      } else {
-        await dispatch(addProduct(formData)).unwrap();
-        toast.success("Product added successfully");
-      }
-
-      setProductDetails({
-        productName: "",
-        description: "",
-        originalPrice: "",
-        sellingPrice: "",
-        category: "",
-        subCategory: "",
-        stock: "",
-      });
-
-      setImages([null, null, null, null]);
-      setPreviews([null, null, null, null]);
-
-    } catch (error) {
-      toast.error(error?.message || "Something went wrong");
-    }
-  };
+    setImages([null, null, null, null]);
+    setPreviews([null, null, null, null]);
+  } catch (error) {
+    toast.error(error?.message || "Something went wrong");
+  }
+};
 
 
   return (
@@ -166,7 +173,6 @@ export const AdminAddProduct = () => {
           {isEditMode ? "Update Product" : "Add New Product"}
         </h2>
 
-  
         <div>
           <h3 className="font-semibold mb-2">Upload Images</h3>
           <div className="flex gap-4 flex-wrap">
@@ -200,11 +206,33 @@ export const AdminAddProduct = () => {
           </div>
         </div>
 
+        {/* Product Group ID */}
+        <input
+          type="text"
+          name="productGroupId"
+          placeholder="Product Group ID (optional)"
+          value={productDetails.productGroupId}
+          onChange={handleChange}
+          className="w-full border border-gray-200 rounded px-3 py-2"
+        />
+        <span className="text-gray-500 text-xs">
+          Leave empty for new product. Use existing group ID to add a new brand variant.
+        </span>
+
         <input
           type="text"
           name="productName"
           placeholder="Product Name"
           value={productDetails.productName}
+          onChange={handleChange}
+          className="w-full border border-gray-200 rounded px-3 py-2"
+        />
+
+        <input
+          type="text"
+          name="brand"
+          placeholder="Brand Name"
+          value={productDetails.brand}
           onChange={handleChange}
           className="w-full border border-gray-200 rounded px-3 py-2"
         />
@@ -249,7 +277,6 @@ export const AdminAddProduct = () => {
           )}
         </div>
 
-     
         <div className="flex gap-5">
           <input
             type="number"
@@ -268,7 +295,6 @@ export const AdminAddProduct = () => {
             className="w-full border border-gray-200 rounded px-3 py-2"
           />
         </div>
-
 
         <input
           type="number"

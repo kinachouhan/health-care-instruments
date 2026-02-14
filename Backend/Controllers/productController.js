@@ -9,20 +9,18 @@ export const addProduct = async (req, res) => {
       description,
       originalPrice,
       sellingPrice,
+      brand,          // optional
+      productGroupId, // optional
       category,
       subCategory,
       stock,
     } = req.body;
 
-    const stockNum = Number(stock);
-    if (isNaN(stockNum) || stockNum < 0) {
-      return res.status(400).json({ success: false, message: "Invalid stock value" });
-    }
-
-    if (!originalPrice || !sellingPrice) {
+    // Validate required fields
+    if (!productName || !description || !category || !subCategory || !originalPrice || !sellingPrice) {
       return res.status(400).json({
         success: false,
-        message: "Original price and selling price are required",
+        message: "Product name, description, category, subCategory, and prices are required",
       });
     }
 
@@ -33,11 +31,13 @@ export const addProduct = async (req, res) => {
       });
     }
 
+    const stockNum = Number(stock) || 0; // default 0 stock
+    if (isNaN(stockNum) || stockNum < 0) {
+      return res.status(400).json({ success: false, message: "Invalid stock value" });
+    }
+
     if (!req.files || req.files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "At least one product image is required",
-      });
+      return res.status(400).json({ success: false, message: "At least one product image is required" });
     }
 
     const imageUrls = [];
@@ -61,6 +61,8 @@ export const addProduct = async (req, res) => {
     const product = await Product.create({
       productName,
       description,
+      brand: brand || null,       
+      productGroupId: productGroupId || null, 
       price: {
         original: Number(originalPrice),
         selling: Number(sellingPrice),
@@ -80,35 +82,32 @@ export const addProduct = async (req, res) => {
 };
 
 
+
 export const getAllProducts = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    let { page = 1, limit = 10 } = req.query;
+    page = Number(page);
+    limit = Number(limit);
 
-    const skip = (page - 1) * limit;
-
-    // Fetch only limited products for this page
-    const products = await Product.find()
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
-
-    // Count total documents for pagination
     const totalProducts = await Product.countDocuments();
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    const products = await Product.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
-      responseData: products,                 // products for current page
-      totalPages: Math.ceil(totalProducts / limit), // total pages
-      currentPage: page,        // current page number
+      responseData: products,
+      totalPages,
+      currentPage: page,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch products",
-    });
+    res.status(500).json({ success: false, message: "Failed to fetch products" });
   }
 };
+
 
 export const deleteProduct = async (req, res) => {
   try {
@@ -179,13 +178,13 @@ export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
     const {
       productName,
       description,
+      brand,           // optional
+      productGroupId,  // optional
       category,
       subCategory,
       stock,
@@ -195,15 +194,16 @@ export const updateProduct = async (req, res) => {
     } = req.body;
 
     if (!productName || !description || !category || !subCategory) {
-      return res
-        .status(400)
-        .json({ message: "All required fields must be provided" });
+      return res.status(400).json({ message: "Product name, description, category, and subCategory are required" });
     }
 
     product.productName = productName;
     product.description = description;
     product.category = category;
     product.subCategory = subCategory;
+
+    if (brand !== undefined) product.brand = brand;
+    if (productGroupId !== undefined) product.productGroupId = productGroupId;
 
     if (originalPrice !== undefined && sellingPrice !== undefined) {
       if (Number(sellingPrice) > Number(originalPrice)) {
@@ -217,6 +217,7 @@ export const updateProduct = async (req, res) => {
       };
     }
 
+ 
     if (stock !== undefined) {
       product.totalStock = Number(stock);
       product.availableStock = Number(stock);
@@ -228,9 +229,7 @@ export const updateProduct = async (req, res) => {
     if (req.files && req.files.length > 0) {
       const imageUrls = [];
       for (const file of req.files) {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: "products",
-        });
+        const result = await cloudinary.uploader.upload(file.path, { folder: "products" });
         imageUrls.push(result.secure_url);
       }
       product.images = imageUrls;
@@ -238,9 +237,7 @@ export const updateProduct = async (req, res) => {
 
     await product.save();
 
-    res
-      .status(200)
-      .json({ message: "Product updated successfully", responseData: product });
+    res.status(200).json({ message: "Product updated successfully", responseData: product });
   } catch (error) {
     console.error("Update Product Error:", error);
     res.status(500).json({ message: error.message || "Something went wrong" });
@@ -249,4 +246,15 @@ export const updateProduct = async (req, res) => {
 
 
 
+export const getProductsByBrand = async (req, res) => {
+  try {
+    const { brand } = req.query;
+    if (!brand) return res.status(400).json({ success: false, message: "Brand is required" });
+
+    const products = await Product.find({ brand });
+    res.status(200).json({ success: true, responseData: products });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
