@@ -1,7 +1,5 @@
 import { Review } from "../Models/reviewModel.js";
 import { Order } from "../Models/orderModel.js";
-import mongoose from "mongoose";
-
 
 
 export const submitReview = async (req, res) => {
@@ -15,38 +13,40 @@ export const submitReview = async (req, res) => {
         message: "Product and rating are required",
       });
     }
+
     const hasOrdered = await Order.findOne({
       userId,
-      "items.productId": new mongoose.Types.ObjectId(productId),
-      status: { $ne: "Cancelled" },
+      status: "Delivered",
+      "items.productId": productId,
     });
 
     if (!hasOrdered) {
       return res.status(403).json({
         success: false,
-        message: "You can only review products you have purchased",
+        message: "Only verified purchasers can submit reviews.",
       });
     }
 
-    let review = await Review.findOne({
+    const existingReview = await Review.findOne({
       user: userId,
       product: productId,
     });
 
-    if (review) {
-      review.rating = rating;
-      review.comment = comment;
-      await review.save();
-    } else {
-      review = await Review.create({
-        user: userId,
-        product: productId,
-        ratings: rating,
-        comments: comment,
+    if (existingReview) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already reviewed this product.",
       });
     }
 
-    res.status(200).json({
+    const review = await Review.create({
+      user: userId,
+      product: productId,
+      rating,
+      comment,
+    });
+
+    res.status(201).json({
       success: true,
       message: "Review submitted successfully",
       responseData: review,
@@ -115,22 +115,34 @@ export const canUserReviewProduct = async (req, res) => {
     const userId = req.user._id;
     const { productId } = req.params;
 
+    console.log("User ID:", userId);
+    console.log("Product ID:", productId);
+
+    const orders = await Order.find({ userId });
+    console.log("All user orders:", orders);
+
+    const deliveredOrders = await Order.find({
+      userId,
+      status: "Delivered",
+    });
+    console.log("Delivered Orders:", deliveredOrders);
+
     const order = await Order.findOne({
       userId,
-      "items.productId": new mongoose.Types.ObjectId(productId),
-      status: { $ne: "Cancelled" },
+      status: "Delivered",
+      "items.productId": productId,
     });
 
-    res.status(200).json({
+    console.log("Matched Order:", order);
+
+    res.json({
       success: true,
-      message: "Review permission checked",
-      responseData: !!order, 
+      responseData: !!order,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to check review permission",
-    });
+    console.log(error);
+    res.status(500).json({ success: false });
   }
 };
+
+

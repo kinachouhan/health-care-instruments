@@ -76,6 +76,18 @@ export const AdminHeader = () => {
               Orders
             </NavLink>
 
+            <NavLink
+              to="all-users"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-md text-sm font-medium transition whitespace-nowrap
+              ${isActive
+                  ? "bg-sky-400 text-white"
+                  : "bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600"}`
+              }
+            >
+              All Users
+            </NavLink>
+
           </div>
         </nav>
       </div>

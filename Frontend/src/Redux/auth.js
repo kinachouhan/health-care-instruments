@@ -7,6 +7,7 @@ const initialState = {
       isAuthenticated: false,
       loading: false,
       error: null,
+      allUsers: [],
 };
 
 export const sendOtp = createAsyncThunk(
@@ -199,6 +200,25 @@ export const logout = createAsyncThunk(
       }
 );
 
+export const fetchAllUsers = createAsyncThunk(
+      "user/fetchAllUsers",
+      async (_, thunkAPI) => {
+            try {
+                  const res = await fetch(`${API}/api/v1/user/admin/users`, {
+                        method: "GET",
+                        credentials: "include",
+                  });
+
+                  const data = await res.json();
+                  if (!data.success) throw new Error(data.message);
+
+                  return data.responseData;
+            } catch (error) {
+                  return thunkAPI.rejectWithValue(error.message);
+            }
+      }
+);
+
 
 const authSlice = createSlice({
       name: "auth",
@@ -290,8 +310,8 @@ const authSlice = createSlice({
                   })
                   .addCase(getMe.rejected, (state) => {
                         state.loading = false;
-                        state.user = null;            
-                        state.isAuthenticated = false;  
+                        state.user = null;
+                        state.isAuthenticated = false;
                   })
                   .addCase(updateProfile.pending, (state) => {
                         state.loading = true;
@@ -304,7 +324,10 @@ const authSlice = createSlice({
                   .addCase(updateProfile.rejected, (state, action) => {
                         state.loading = false;
                         state.error = action.payload;
-                  });
+                  })
+                  .addCase(fetchAllUsers.fulfilled, (state, action) => {
+                        state.allUsers = action.payload;
+                  })
       }
 });
 

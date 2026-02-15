@@ -24,6 +24,7 @@ import { fetchCart } from './Redux/cartSlice'
 import { fetchWishList } from './Redux/wishListSlice'
 import { Checkout } from './Pages/Checkout'
 import { Orders } from './Pages/Orders'
+import { AdminAllUsers } from './Admin/AdminAllUsers'
 
 function App() {
 
@@ -74,7 +75,8 @@ function App() {
         { index: true, element: <AdminAddProduct /> }, 
         { path: "list", element: <AdminAllProductList /> }, 
         { path: "all-orders", element: <AdminAllOrders /> }, 
-        { path:"product/edit/:id",  element: <AdminAddProduct /> }
+        { path:"product/edit/:id",  element: <AdminAddProduct /> },
+        { path:"all-users",  element: <AdminAllUsers/> }
       ],
     },
     {

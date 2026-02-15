@@ -138,7 +138,6 @@ export const sendEmail = async (to, otp) => {
     });
 };
 
-
 export const sendOtp = async (req, res) => {
     try {
         const { email } = req.body;
@@ -264,9 +263,6 @@ export const getMe = async (req, res) => {
     }
 }
 
-
-
-
 export const updateProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -278,7 +274,6 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    /* ================= BASIC FIELDS ================= */
     if (req.body.name !== undefined) {
       user.name = req.body.name;
     }
@@ -287,7 +282,6 @@ export const updateProfile = async (req, res) => {
       user.phone = req.body.phone;
     }
 
-    /* ================= ADDRESS (PARTIAL MERGE) ================= */
     if (!user.address) {
       user.address = {};
     }
@@ -324,6 +318,24 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error"
+    });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      responseData: users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch users",
     });
   }
 };
