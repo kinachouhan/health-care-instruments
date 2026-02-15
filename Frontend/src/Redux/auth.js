@@ -5,7 +5,7 @@ const API = import.meta.env.VITE_API_URL;
 const initialState = {
       user: null,
       isAuthenticated: false,
-      loading: false,
+      loading: true,
       error: null,
       allUsers: [],
 };

@@ -11,6 +11,7 @@ export const AdminAddProduct = () => {
   const [previews, setPreviews] = useState([null, null, null, null]);
 
   const { loading, singleProduct } = useSelector((state) => state.product);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -25,7 +26,7 @@ export const AdminAddProduct = () => {
     subCategory: "",
     stock: "",
     brand: "",
-    productGroupId: "", // ✅ new field for multiple brands
+    productGroupId: "", 
   });
 
   useEffect(() => {
@@ -85,8 +86,6 @@ export const AdminAddProduct = () => {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
-
-  // Validate required fields only
   if (
     !productDetails.productName ||
     !productDetails.description ||
@@ -142,8 +141,6 @@ export const AdminAddProduct = () => {
       await dispatch(addProduct(formData)).unwrap();
       toast.success("Product added successfully");
     }
-
-    // Reset form
     setProductDetails({
       productName: "",
       description: "",
@@ -161,6 +158,8 @@ export const AdminAddProduct = () => {
     toast.error(error?.message || "Something went wrong");
   }
 };
+
+
 
 
   return (

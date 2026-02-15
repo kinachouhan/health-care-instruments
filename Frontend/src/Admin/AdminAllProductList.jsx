@@ -53,9 +53,9 @@ export const AdminAllProductList = () => {
 
   if (loading) {
     return (
-      <p className="text-center py-10 text-lg font-medium">
-        Loading products...
-      </p>
+      <div className="flex items-center justify-center h-screen w-full">
+        <div className="w-16 h-16 border-4 border-gray-300 border-t-sky-500 rounded-full animate-spin"></div>
+      </div>
     );
   }
 
@@ -85,7 +85,7 @@ export const AdminAllProductList = () => {
             <tr>
               <th className="p-2 border">S.No.</th>
               <th className="p-2 border">Name</th>
-               <th className="p-2 border">Brand</th> 
+              <th className="p-2 border">Brand</th>
               <th className="p-2 border">Category</th>
               <th className="p-2 border">Subcategory</th>
               <th className="p-2 border">Price</th>
@@ -109,7 +109,7 @@ export const AdminAllProductList = () => {
                   </td>
 
                   <td className="p-2 border">{product.productName}</td>
-                  <td className="p-2 border">{product.brand || "-"}</td>  
+                  <td className="p-2 border">{product.brand || "-"}</td>
                   <td className="p-2 border">{product.category}</td>
                   <td className="p-2 border">{product.subCategory}</td>
 
@@ -188,11 +188,10 @@ export const AdminAllProductList = () => {
           <button
             key={i}
             onClick={() => setPage(i + 1)}
-            className={`px-3 py-1 border rounded ${
-              page === i + 1
+            className={`px-3 py-1 border rounded ${page === i + 1
                 ? "bg-sky-600 text-white"
                 : "bg-white hover:bg-gray-100"
-            }`}
+              }`}
           >
             {i + 1}
           </button>
