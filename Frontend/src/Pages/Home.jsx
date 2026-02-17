@@ -1,4 +1,3 @@
-
 import { NewArrival } from "../Components/NewArrival";
 import { TopCategory } from "../Components/TopCategory";
 import { useEffect , useMemo} from "react";
@@ -25,33 +24,40 @@ export const Home = () => {
     return map;
   }, [products]);
 
-
-
   return (
-    <div className="mb-20">
-      <div className=" bg-gradient-to-r from-sky-50 to-white  mx-auto px-4 text-center sm:py-30">
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 mb-4">
+    <div className="mb-10 sm:mb-16 lg:mb-20">
+
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-sky-50 to-white mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-28 text-center">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-4 leading-tight">
           Premium Dental Products, Trusted by Professionals
         </h1>
-        <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+
+        <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-xl sm:max-w-2xl mx-auto mb-6 sm:mb-8">
           Shop top-quality dental tools, hygiene kits, and cosmetic care essentials — all in one place.
         </p>
+
         <a
           href="/products"
-          className="inline-block bg-sky-500 hover:bg-gray-800 text-white font-semibold px-6 py-3 rounded-full shadow-md transition"
+          className="inline-block bg-sky-500 hover:bg-gray-800 text-white font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-md transition text-sm sm:text-base"
         >
           Shop Now
         </a>
       </div>
 
-      <div className="max-w-7xl mx-auto py-8">
+      {/* Top Category */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <TopCategory />
       </div>
-      <div className="bg-green-50 my-10">
+
+      {/* New Arrival */}
+      <div className="bg-green-50 my-8 sm:my-10 lg:my-14 px-4 sm:px-6 lg:px-8">
         <NewArrival limit={6} />
       </div>
+
+      {/* Category Sections */}
       <div className="bg-[#faf7f3]">
-        <div className=" min-h-screen px-4 py-10 max-w-7xl mx-auto">
+        <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-14 max-w-7xl mx-auto">
           {Object.entries(productsByCategory).map(
             ([category, items]) =>
               items.length > 0 && (

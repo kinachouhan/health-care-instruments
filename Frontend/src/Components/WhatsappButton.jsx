@@ -13,9 +13,9 @@ export const WhatsAppButton = ({ message = "Hello Admin, I have a query." }) => 
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
-      className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-xl transition duration-300 z-50"
+      className="fixed bottom-15 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-xl transition duration-300 z-50"
     >
-      <FaWhatsapp size={28} />
+      <FaWhatsapp size={20} />
     </a>
   );
 };

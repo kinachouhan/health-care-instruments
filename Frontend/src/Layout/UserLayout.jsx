@@ -18,7 +18,6 @@ export const UserLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <Navbar />
       <main className="flex-grow">
         <Outlet />
       </main>

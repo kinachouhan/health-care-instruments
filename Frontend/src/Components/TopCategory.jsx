@@ -1,37 +1,54 @@
-
 import categories from "../Jsondata/category.json";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 export const TopCategory = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-10">
-        <h2 className="text-2xl font-bold">Top Categories</h2>
-        <button onClick={() => navigate("/products")} className="cursor-pointer bg-orange-500 text-white px-3 py-1 rounded">VIEW ALL</button>
+    <div className="px-4 py-6">
+      
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl md:text-2xl font-bold">
+          Top Categories
+        </h2>
+
+        <button
+          onClick={() => navigate("/products")}
+          className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded-md transition"
+        >
+          VIEW ALL
+        </button>
       </div>
 
-      <div className="flex space-x-4 overflow-x-auto justify-between scrollbar-hide py-2">
+      {/* Categories - Scrollable on ALL devices */}
+      <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-2">
+
         {categories.map((cat, index) => (
           <div
             key={index}
-            className="flex-shrink-0 flex flex-col  items-center text-center"
             onClick={() => {
               navigate(`/products?category=${cat.name}`);
-              setOpen(false);
             }}
+            className="flex-shrink-0 flex flex-col items-center text-center cursor-pointer group min-w-[90px] md:min-w-[110px]"
           >
-            <div className="w-22 h-22 rounded-full overflow-hidden border-2 border-gray-200 transform transition-transform duration-500 ease-in-out hover:scale-115">
+            
+            {/* Circle Image */}
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border border-gray-200 group-hover:scale-105 transition duration-300">
               <img
                 src={cat.image}
                 alt={cat.name}
                 className="w-full h-full object-cover"
               />
             </div>
-            <span className="mt-2 text-sm font-medium">{cat.name}</span>
+
+            {/* Name */}
+            <span className="mt-2 text-xs md:text-sm font-medium text-gray-700 group-hover:text-blue-600 transition whitespace-nowrap">
+              {cat.name}
+            </span>
           </div>
         ))}
+
       </div>
     </div>
   );
