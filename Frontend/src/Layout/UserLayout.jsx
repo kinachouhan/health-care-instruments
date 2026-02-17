@@ -3,6 +3,7 @@ import { Footer } from "../Pages/Footer";
 import { Outlet } from "react-router-dom";
 import { Navbar } from "../Pages/Navbar";
 import { useSelector } from "react-redux";
+import { WhatsAppButton } from "../Components/WhatsappButton";
 
 export const UserLayout = () => {
   const { loading } = useSelector((state) => state.user);
@@ -22,6 +23,7 @@ export const UserLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <WhatsAppButton/>
     </div>
   );
 };
